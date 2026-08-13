@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hello DSH
+<img src="assets/banner.png" alt="Hello DSH — 万物皆可插件" width="820">
 
 **[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的入门第一课**
 

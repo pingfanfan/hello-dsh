@@ -1,6 +1,6 @@
 <div align="center">
 
-# Hello DSH
+<img src="assets/banner.png" alt="Hello DSH — Everything is a Plugin" width="820">
 
 **The first lesson for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**
 

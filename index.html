@@ -9,7 +9,8 @@
 <meta property="og:description" content="从零开始，30 分钟做出你的第一个 DSH 插件。10 步，每步带检查点。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://learn-dsh.com">
-<meta property="og:image" content="https://learn-dsh.com/assets/05-plugin-list-133.png">
+<meta property="og:image" content="https://learn-dsh.com/assets/banner.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐋</text></svg>">
 <style>
 :root{
@@ -45,8 +46,9 @@ a{color:var(--brand);text-decoration:none}
 a:hover{text-decoration:underline}
 
 /* hero */
-.hero{padding:72px 0 56px;text-align:center;border-bottom:1px solid var(--line)}
-.eyebrow{display:inline-block;font-size:13px;color:var(--accent);background:var(--brand-soft);border:1px solid var(--line-strong);padding:5px 14px;border-radius:999px;margin-bottom:22px;font-weight:500}
+.hero{padding:48px 0 52px;text-align:center;border-bottom:1px solid var(--line)}
+.banner{width:100%;max-width:760px;height:auto;border-radius:var(--radius);border:1px solid var(--line-strong);margin-bottom:26px;display:block;margin-left:auto;margin-right:auto}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 h1{font-size:clamp(34px,5.5vw,54px);line-height:1.15;margin:0 0 18px;letter-spacing:-.02em;font-weight:700}
 .lede{font-size:clamp(17px,2.2vw,20px);color:var(--muted);margin:0 auto 32px;max-width:660px}
 .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
@@ -109,8 +111,8 @@ footer a{color:var(--muted)}
 
 <header class="hero">
   <div class="wrap">
-    <span class="eyebrow">DeepSeek Harness 入门第一课</span>
-    <h1>Hello DSH</h1>
+    <img class="banner" src="assets/banner.png" alt="Hello DSH — 万物皆可插件">
+    <h1 class="sr">Hello DSH</h1>
     <p class="lede">从「怎么打开终端」开始，30 分钟做出你的第一个插件。<br>10 步，每步带检查点，看到指定结果才往下走。</p>
     <div class="cta">
       <a class="btn btn-primary" href="docs/hello-dsh.md">开始学 →</a>
