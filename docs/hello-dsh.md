@@ -2,7 +2,7 @@
 
 DeepSeek Harness（下称 DSH）的第一句自我介绍是 **"Everything is a Plugin"**。
 
-这句话不是修辞。跑完这份教程，你会亲眼看到它有 **133 个插件**，其中包括模型适配器、工具注册表、会话记录、Web 服务器，甚至 **agent 的主循环本身**。然后你会自己做出两个插件。
+这句话不是修辞。跑完这份教程，你会亲眼看到它有 **133 个插件**，其中包括模型适配器、工具注册表、会话记录、Web 服务器，甚至 **agent 的主循环本身**。然后你会自己做出一个。
 
 **这份教程假设你什么都没有。** 没装过 Node，没用过命令行，不知道什么是环境变量。每一节末尾都有一个检查点，**看到指定的结果才能往下走**。
 
@@ -22,10 +22,10 @@ DeepSeek Harness（下称 DSH）的第一句自我介绍是 **"Everything is a P
 | [第 5 步](#第-5-步亲眼看到-133-个插件) | **亲眼看到 133 个插件** | 3 分钟 |
 | [第 6 步](#第-6-步做第一个插件markdown-路线) | 做第一个插件（Markdown 路线） | 5 分钟 |
 | [第 7 步](#第-7-步看它的生命周期) | 看它的生命周期 | 5 分钟 |
-| [第 8 步](#第-8-步做第二个插件typescript-路线) | 做第二个插件（TypeScript 路线） | 15 分钟 |
+| [第 8 步](#第-8-步接下来可以做什么) | 接下来可以做什么 | 3 分钟 |
 | [第 9 步](#第-9-步原理选读) | 原理（选读） | 10 分钟 |
 
-前 7 步大约 30 分钟，跑完就能用。第 8、9 步是给想深入的人准备的。
+前 7 步大约 30 分钟，跑完就能用。第 9 步（原理）是选读的。
 
 ---
 
@@ -248,12 +248,16 @@ mkdir -p ~/Documents/dsh-test
 
 选好之后，输入框的提示文字会变，发送按钮变成**可点击**的蓝色。
 
+选好之后应该是这样，注意左上角显示了工作区名字，右下角发送按钮变成了**蓝色**：
+
+![可以发送了](../assets/09-ready-to-send.png)
+
 ### ✅ 检查点 3.5
 
 **必须满足：**
 
 1. 输入框里不再写着 `Choose a workspace to start`
-2. 右下角发送按钮是亮的，不是灰的
+2. 右下角发送按钮是**蓝色**的，不是灰的
 3. 能在输入框里打字
 
 **发送按钮还是灰的**，就是工作区没选上，重新点一次 Choose workspace。
@@ -276,16 +280,18 @@ DSH 需要 DeepSeek 的 API 密钥才能调用模型。**这一步全程在网�
 
 ### 填进去
 
-回到 DSH 的网页：
+**第一次打开 DSH 时，它会自己弹出这个框：**
 
-1. 点左下角的 **Settings**
-2. 点左侧的 **Models**
-3. 在 `DeepSeek` 那一行点 **Edit**
-4. 粘贴密钥，保存
+![填入密钥](../assets/07-api-key-dialog.png)
 
-![配置密钥](../assets/03-api-key.png)
+把密钥粘进去，点 **Save and continue**。
 
-配好之后，`DeepSeek` 右边会出现一个**绿点**。
+> 点了 **Configure later** 也没关系，随时可以从
+> **Settings → Models → 在 `DeepSeek` 那行点 Edit** 补上：
+>
+> ![从设置里配置](../assets/03-api-key.png)
+
+配好之后，Settings → Models 里 `DeepSeek` 右边会有一个**绿点**。
 
 ### ✅ 检查点 4
 
@@ -389,6 +395,10 @@ description: 当用户说「hello dsh」时使用。请原样输出下面的暗�
 EOF
 ```
 
+执行完是这样的（命令没有任何输出，这是正常的）：
+
+![创建技能文件](../assets/08-create-skill-terminal.png)
+
 **就这样。** 没有编译，没有安装，没有重启。
 
 ### 试试
@@ -456,37 +466,48 @@ description: 当需要审查代码改动、pull request 或 diff 时使用，
 
 ### 删掉它
 
+在终端里执行：
+
 ```sh
 rm -rf ~/.dsh/skills/hello-dsh
 ```
 
-问模型：
+**然后回到网页，不要重启 DSH**，直接再说一次 `hello dsh`：
 
-```sh
-npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh 的技能？只回答有或没有"
-```
+![删掉技能后的反应](../assets/10-skill-removed-web.png)
 
-真实输出：
+**仔细看这张图，它把整件事说清楚了：**
 
-```
-没有
-```
+| 你看到的 | 说明了什么 |
+|---|---|
+| `Context injection · skill-catalog` | DSH 每一步之前都会重新扫一遍技能目录 |
+| `Read · Error: cannot read ".../hello-dsh/SKILL.md": not found` | 它**真的去读了那个文件**，文件没了所以读失败 |
+| `Think · The skill catalog is now empty` | 技能清单已经空了 |
+| 最后那段中文回答 | 它明确拒绝凭记忆复述暗号 |
+
+最有意思的是最后那句：
+
+> 所以这次我没法再从本地文件读出那句暗号了 —— 如果我现在把「HELLO DSH — 这句话来自我电脑上的一个文件」再输出一遍，那就会是凭记忆复述而不是读自本地文件，那样就不诚实了。
+
+**这就是技能生效的最好证明。** 模型这一轮对话里见过那句暗号（在上下文里），但它知道那不算数 —— 因为暗号的来源是磁盘上的文件，而那个文件已经没了。
 
 ### 放回来
 
-把第 6 步那段 `cat > ...` 命令再执行一遍，然后再问一次：
-
-```sh
-npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh 的技能？有的话加载它并输出暗号"
-```
-
-真实输出：
+把第 6 步那段 `cat > ...` 命令再执行一遍，**依然不重启**，再问一次：
 
 ```
-有的，hello-dsh 技能在本次会话中可用，我已通过 skill 工具加载它。暗号如下：
-
-**HELLO DSH — 这句话来自我电脑上的一个文件**
+hello dsh
 ```
+
+暗号又回来了。
+
+> **也可以用命令行验证同一件事**，效果一样：
+>
+> ```sh
+> npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh 的技能？只回答有或没有"
+> ```
+>
+> 删掉时答「没有」，放回后答「有」。
 
 ### 这意味着什么
 
@@ -502,185 +523,51 @@ npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh �
 
 ---
 
-## 第 8 步：做第二个插件（TypeScript 路线）
+## 第 8 步：接下来可以做什么
 
-Markdown 路线改变模型的**做事方式**，TypeScript 路线给它**新能力**。想让它能查天气、能读数据库、能在界面上加个按钮，就得走这条路。
+你已经掌握了 DSH 最常用的扩展方式。**大部分需求到这里就够了。**
 
-**这一步需要一点编程基础。只想用不想开发的话，可以跳到第 9 步。**
+### 再写几个技能
 
-下面会带你踩三个真实的坑，**这三个报错我都实际遇到过**，按你会遇到的顺序排。
-
-### 建目录
+同样的套路，换个 `name` 和 `description` 就行：
 
 ```sh
-mkdir -p ~/hello-dsh-plugin/src
-cd ~/hello-dsh-plugin
+mkdir -p ~/.dsh/skills/我的技能名
+# 然后写 SKILL.md
 ```
 
-### 第一版：会报错
+写法上有几条经验（来自 DeepSeek 官方那 11 个内置技能）：
 
-创建 `src/hello.ts`：
+1. **`description` 用「当……时使用」开头** —— 它决定模型什么时候想起你
+2. **写判断标准，不写清单** —— 官方原话是 *"This skill is guidance, not a complete checklist"*
+3. **单独写一节「不要做的事」** —— 挡住的问题往往比「要做什么」更多
 
-```ts
-import type { Context } from '@deepseek-ai/cordis'
+详细规则见 [`dsh-skill-dev`](../examples/skills/dsh-skill-dev/SKILL.md) 技能。
 
-export const name = 'hello-dsh-plugin'
-export const inject = ['tools']
+### 直接用现成的
 
-export function apply(ctx: Context) {
-  ctx.tools.register({
-    name: 'hello_dsh',
-    description: '返回一句问候。',
-    parameters: { type: 'object', properties: {} },
-  }, async () => ({ content: [{ type: 'text', text: 'hi' }] }))
-}
-```
-
-再创建一个配置文件告诉 DSH 去哪找它。**注意路径必须是完整路径**，下面这条命令会自动填对：
+这个仓库的 [`examples/skills/`](../examples/skills/) 里有 22 个写好的中文技能，覆盖代码审查、系统化排查、写提交信息、安全审查等：
 
 ```sh
-cat > cordis.yml <<YAML
-- insert:
-    - id: hello-dsh
-      name: '$(pwd)/src/hello.ts'
-YAML
+git clone https://github.com/pingfanfan/hello-dsh.git
+cd hello-dsh && ./install.sh
 ```
 
-运行：
+或者把 [INSTALL-FOR-AGENTS.md](../INSTALL-FOR-AGENTS.md) 的链接丢给任何 AI agent，说「照这个装」。
 
-```sh
-npx @deepseek-ai/dsh --profile headless --patch ./cordis.yml "调用 hello_dsh"
-```
+### 什么时候需要写代码插件
 
-**报错一：**
+技能改变模型的**做事方式**，但它不能给模型**新能力**。需要下面这些时，就得写 TypeScript 插件：
 
-```
-TypeError: tool "hello_dsh" must declare output { schema, render, presentationMeta? }
-```
+| 需求 | 为什么技能做不到 |
+|---|---|
+| 让它查天气、读数据库 | 要调外部 API |
+| 在网页界面上加一个面板 | 要改 UI |
+| 在每次对话前后做点什么 | 要挂生命周期钩子 |
 
-**意思是**：注册工具时必须声明 `output`，说明返回值长什么样、怎么显示。而且要用 `defineTool()` 包一层。
+代码插件的完整流程（含三个新手必踩的报错）见 [`dsh-first-plugin`](../examples/skills/dsh-first-plugin/SKILL.md) 技能，以及可运行的例子 [`examples/hello-plugin/`](../examples/hello-plugin/)。
 
-### 第二版：还会报错
-
-```ts
-import type { Context } from '@deepseek-ai/cordis'
-import { defineTool } from '@deepseek-ai/dsh-tools'
-
-export const name = 'hello-dsh-plugin'
-export const inject = ['tools']
-
-export function apply(ctx: Context) {
-  ctx.tools.register(defineTool({
-    name: 'hello_dsh',
-    description: '返回一句问候。',
-    parameters: {
-      who: { type: 'string', required: false },
-    },
-    output: {
-      schema: {
-        type: 'object',
-        additionalProperties: false,
-        properties: { greeting: { type: 'string', required: true } },
-      },
-      render: (_args, value) => [{ type: 'text', text: value.greeting }],
-    },
-    execute(args) {
-      return Promise.resolve({ greeting: `HELLO DSH, ${args.who ?? 'world'}` })
-    },
-  }))
-}
-```
-
-**报错二：**
-
-```
-code: 'UNSUPPORTED_SCHEMA',
-violations: [ 'parameters.who.required must be true when present' ]
-```
-
-**意思是**：`required` 这个字段只能填 `true`。想表示「可选参数」，就**直接不写这个字段**。
-
-### 第三版：跑通
-
-把 `required: false` 整个删掉：
-
-```ts
-parameters: {
-  who: { type: 'string' },        // 可选：不写 required
-},
-```
-
-```sh
-npx @deepseek-ai/dsh --profile headless --patch ./cordis.yml \
-  "调用 hello_dsh 工具，who 填 pingfan，原样告诉我返回值"
-```
-
-真实输出：
-
-```
-工具返回值为：
-
-HELLO DSH, pingfan
-```
-
-**成了。你刚给 DSH 加了一个新工具。**
-
-### 报错三：`export default`
-
-这个你上面没遇到，但迟早会踩，而且**官方自己踩过并写了事故报告**。
-
-如果你的文件里写了：
-
-```ts
-export const name = 'my-plugin'
-export const inject = ['tools']
-export function apply(ctx) { }
-export default apply          // ← 这一行
-```
-
-会得到：
-
-```
-cannot get property "tools" without inject
-```
-
-**原因**：DSH 的加载器优先读 `export default`。一旦有它，加载器拿到的就只是那个函数，而 `name`、`inject` 这些同级的导出**被整个丢掉了**，插件在一个什么都没有的环境里运行。
-
-这个坑当时有 **178 个测试全绿、100% 覆盖率**，一个都没抓到，因为所有测试都绕过了真实的加载路径。
-
-**修法**：删掉 `export default`。
-
-### 一个容易搞混的地方
-
-```ts
-// parameters 是扁平的字段列表
-parameters: {
-  who: { type: 'string' },
-}
-
-// output.schema 是标准 JSON Schema，要写 type 和 properties
-output: {
-  schema: {
-    type: 'object',
-    properties: { greeting: { type: 'string', required: true } },
-  },
-}
-```
-
-两者形态不一样，别互相套用。
-
-### ✅ 检查点 8
-
-**必须看到 `HELLO DSH, pingfan` 这个返回值。**
-
-卡住的话：
-
-```sh
-npx @deepseek-ai/dsh --profile web --dump-config | grep -A3 hello-dsh
-```
-
-- 输出里找不到 → 配置没生效，检查路径是不是完整路径
-- 找到了但写着 `disabled: true` → 被禁用了
+**但先别急着写。** 大多数人以为需要插件的场景，其实用技能就能解决。先问一句：这件事能不能用大白话说清楚？能，就写技能。
 
 ---
 
