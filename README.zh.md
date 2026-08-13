@@ -42,6 +42,7 @@ cd dsh-skills
 |---|---|
 | `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限、技能发现 |
 | `dsh-skill-dev` | 给 DSH 写技能，或技能没被发现 |
+| `dsh-first-plugin` | 从零做出并装上第一个插件（实测流程 + 三个报错） |
 | `dsh-plugin-dev` | 给 DSH 写插件，或插件没加载没注入 |
 | `dsh-troubleshoot` | DSH 起不来、配置没生效、UNKNOWN_TOOL、技能不见了 |
 | `plan-before-code` | 任务要改多处、有不确定性、超过半天 |

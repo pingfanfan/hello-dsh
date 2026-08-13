@@ -1,0 +1,10 @@
+# 复制为 cordis.yml，并把路径换成你本机的绝对路径。
+# 生成方式：
+#   cat > cordis.yml <<YAML
+#   - insert:
+#       - id: hello
+#         name: '$(pwd)/src/hello.ts'
+#   YAML
+- insert:
+    - id: hello
+      name: '/absolute/path/to/hello-plugin/src/hello.ts'

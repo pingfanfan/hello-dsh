@@ -42,6 +42,7 @@ You can also just copy any directory under `skills/` into `~/.dsh/skills/`. The 
 |---|---|
 | `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, discovery |
 | `dsh-skill-dev` | Writing a skill, or a skill is not being discovered |
+| `dsh-first-plugin` | Building and installing your first plugin (tested walkthrough) |
 | `dsh-plugin-dev` | Writing a plugin, or a plugin fails to load or inject |
 | `dsh-troubleshoot` | DSH won't start, config not taking effect, UNKNOWN_TOOL, missing skills |
 | `plan-before-code` | A task spanning several files, with unknowns, or over half a day |

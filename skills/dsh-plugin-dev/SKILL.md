@@ -74,6 +74,35 @@ Cordis 只对插件的 `config` 做递归插值。`disabled`、`isolate`、`inte
 
 **规则：条件组合用显式的 overlay 文件，不要在元数据字段上写表达式。**
 
+## 注册工具的两个实测坑
+
+`ctx.tools.register()` 的参数形态跟直觉不一样，这两条是实际跑出来的报错：
+
+**一、必须用 `defineTool()` 包裹，且必须声明 `output`**
+
+```
+tool "xxx" must declare output { schema, render, presentationMeta? }
+```
+
+`output` 里要有 `schema`（返回值的 JSON Schema）和 `render`（渲染函数）。
+
+**二、`parameters` 不是标准 JSON Schema，且 `required` 只能填 `true`**
+
+```
+UNSUPPORTED_SCHEMA: parameters.who.required must be true when present
+```
+
+```ts
+// parameters 是扁平字段映射，不是 { type:'object', properties:{...} }
+parameters: {
+  who: { type: 'string' },                 // 可选：省略 required
+  what: { type: 'string', required: true } // 必填
+}
+// 但 output.schema 是标准 JSON Schema，两者形态不同
+```
+
+完整可运行的例子见 `dsh-first-plugin` 技能。
+
 ## 依赖声明
 
 ```ts
