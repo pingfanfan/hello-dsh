@@ -1,0 +1,110 @@
+# dsh-skills
+
+[English](README.md) | 中文
+
+给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）用的中文技能集。
+
+技能是纯 Markdown——不用写代码，不用构建，不用发包。放进目录就自动生效，改完不用重启。
+
+## 安装
+
+```sh
+git clone https://github.com/pingfanfan/dsh-skills.git
+cd dsh-skills
+./install.sh
+```
+
+安装到 `~/.dsh/skills/`。DSH 会自动发现，**无需重启**。
+
+先看会发生什么：
+
+```sh
+./install.sh --dry-run
+```
+
+装到跨 agent 的共享目录（Claude Code 等工具也能用）：
+
+```sh
+./install.sh --agents-dir      # → ~/.agents/skills/
+```
+
+移除：
+
+```sh
+./install.sh --uninstall
+```
+
+也可以直接把 `skills/` 下的任意目录拷进 `~/.dsh/skills/`——脚本只是省事，不是必需的。
+
+## 技能清单
+
+| 技能 | 什么时候用 |
+|---|---|
+| `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限、技能发现 |
+| `code-review-cn` | 审查代码改动、PR、diff |
+| `debug-systematically` | 遇到 bug、测试失败、"本来是好的现在坏了" |
+| `explain-codebase` | 快速理解陌生项目 |
+| `commit-message` | 写 git 提交信息、拆分改动 |
+
+技能持续增加中。
+
+## 设计原则
+
+**按官方范式写。** DSH 仓库里有 [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills)——DeepSeek 官方自己在用的 11 个技能。本仓库的写法参照它们：明确事实来源、给判断依据而非清单、宁可少而准。
+
+**中文优先。** 官方内置技能是英文的。
+
+**说人话。** 技能是给模型的指令，不是文档。写"先做什么、不要做什么、怎么判断做对了"，不写背景介绍。
+
+## 关于安装脚本
+
+`install.sh` 是这个仓库里唯一的代码，有意写得很保守：
+
+- 只写入 `~/.dsh/skills` 或 `~/.agents/skills`，不碰其他任何路径
+- 安装前打印将写入的确切路径并要求确认
+- 卸载按本仓库的技能清单**逐个比对删除**，不使用通配符——你自己的技能不会被误删
+- 不修改 shell 配置、git 配置或任何全局设置
+- 脚本坏了也不影响技能可用，手动拷贝目录即可
+
+## 自己写一个技能
+
+```
+~/.dsh/skills/<name>/SKILL.md
+```
+
+```markdown
+---
+name: my-skill          # 必需，kebab-case
+description: ...        # 必需，决定模型什么时候会用它
+---
+
+（正文是给模型的指令）
+```
+
+发现路径按优先级（rank 小的优先）：
+
+| Rank | 位置 |
+|---|---|
+| 100 | `<项目>/.dsh/skills` |
+| 200 | `<项目>/.agents/skills` |
+| 400 | `~/.dsh/skills` |
+| 500 | `~/.agents/skills` |
+
+两个坑：
+
+- **frontmatter 的键必须是 kebab-case。** 写成 `userInvocable` 而不是 `user-invocable`，整个技能会被**静默丢弃**，只留一条警告。技能"不见了"先查这里。
+- **`description` 比正文更重要。** 模型靠它决定要不要加载这个技能。写清楚"什么时候用"。
+
+详见 [docs/writing-skills.md](docs/writing-skills.md)。
+
+## 欢迎投稿
+
+有好用的技能就提 PR。要求只有两条：中文、并且你真的在用它。
+
+## 许可
+
+MIT
+
+---
+
+非官方社区项目，与 DeepSeek 无隶属关系。

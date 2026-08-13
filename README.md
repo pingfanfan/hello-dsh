@@ -1,0 +1,110 @@
+# dsh-skills
+
+English | [中文](README.zh.md)
+
+Chinese-language skills for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
+
+Skills are plain Markdown — no code, no build step, no package to publish. Drop a directory in and DSH picks it up. Edits apply without a restart.
+
+## Install
+
+```sh
+git clone https://github.com/pingfanfan/dsh-skills.git
+cd dsh-skills
+./install.sh
+```
+
+Installs to `~/.dsh/skills/`. DSH discovers them automatically — **no restart needed**.
+
+See what it would do first:
+
+```sh
+./install.sh --dry-run
+```
+
+Install to the cross-agent shared directory (also readable by Claude Code and similar tools):
+
+```sh
+./install.sh --agents-dir      # → ~/.agents/skills/
+```
+
+Remove:
+
+```sh
+./install.sh --uninstall
+```
+
+You can also just copy any directory under `skills/` into `~/.dsh/skills/`. The script is a convenience, not a requirement.
+
+## The skills
+
+| Skill | Use it when |
+|---|---|
+| `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, skill discovery |
+| `code-review-cn` | Reviewing a change, PR, or diff |
+| `debug-systematically` | A bug, a failing test, "it worked yesterday" |
+| `explain-codebase` | Getting oriented in an unfamiliar project |
+| `commit-message` | Writing commit messages, splitting changes |
+
+More are being added.
+
+## How these are written
+
+**Following the official pattern.** The DSH repo ships [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills) — 11 skills DeepSeek wrote for their own use. These follow that model: name the sources of truth, give judgment criteria rather than checklists, prefer few and accurate over many and thin.
+
+**Chinese first.** The bundled official skills are in English.
+
+**Instructions, not documentation.** A skill tells the model what to do first, what not to do, and how to know it worked. It is not a background essay.
+
+## About the installer
+
+`install.sh` is the only code here, and it is deliberately conservative:
+
+- Writes only to `~/.dsh/skills` or `~/.agents/skills` — nowhere else
+- Prints the exact target paths and asks before writing
+- Uninstall removes **only the skills listed in this repo, matched by name** — no globs, so your own skills are never touched
+- Never modifies shell profiles, git config, or any global setting
+- If the script breaks, the skills still work — copy the directories by hand
+
+## Writing your own
+
+```
+~/.dsh/skills/<name>/SKILL.md
+```
+
+```markdown
+---
+name: my-skill          # required, kebab-case
+description: ...        # required — this is how the model decides to load it
+---
+
+(body is the instruction the model receives)
+```
+
+Discovery order (lower rank wins):
+
+| Rank | Location |
+|---|---|
+| 100 | `<project>/.dsh/skills` |
+| 200 | `<project>/.agents/skills` |
+| 400 | `~/.dsh/skills` |
+| 500 | `~/.agents/skills` |
+
+Two traps:
+
+- **Frontmatter keys must be kebab-case.** Write `userInvocable` instead of `user-invocable` and the entire skill is **silently dropped** with only a warning. Check this first when a skill "disappears".
+- **`description` matters more than the body.** The model reads it to decide whether to load the skill at all. Say when to use it.
+
+See [docs/writing-skills.md](docs/writing-skills.md).
+
+## Contributing
+
+Open a PR. Two requirements: Chinese, and you actually use it.
+
+## License
+
+MIT
+
+---
+
+Unofficial community project. Not affiliated with DeepSeek.
