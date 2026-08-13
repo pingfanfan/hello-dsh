@@ -6,6 +6,16 @@
 
 技能是纯 Markdown——不用写代码，不用构建，不用发包。放进目录就自动生效，改完不用重启。
 
+## 你需要什么
+
+| 前置 | 必需吗 | 说明 |
+|---|---|---|
+| **Node.js** | 是 | 从 [nodejs.org](https://nodejs.org) 装 LTS 版 |
+| **DSH** | **不用预装** | `npx` 会自动拉，`~/.dsh/` 首次运行时自动生成 |
+| **DeepSeek API Key** | 用的时候要 | [platform.deepseek.com](https://platform.deepseek.com) 领，然后 `export DEEPSEEK_API_KEY=sk-xxx` |
+
+技能可以在 DSH 第一次运行**之前**就装好，不用等它初始化。
+
 ## 安装
 
 ### 最省事：让你的 agent 装
@@ -17,7 +27,7 @@ https://github.com/pingfanfan/dsh-skills/blob/main/INSTALL-FOR-AGENTS.md
 照这个装
 ```
 
-技能是纯 Markdown，agent 只需要拷贝文件，不用编译、不用 npm install。
+它会先帮你检查 Node、DSH、API Key 三项前置，再拷文件。技能是纯 Markdown，不用编译、不用 npm install。
 
 ### 或者自己跑一条命令
 

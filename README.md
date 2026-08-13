@@ -6,6 +6,16 @@ Chinese-language skills for [DeepSeek Harness](https://github.com/deepseek-ai/de
 
 Skills are plain Markdown — no code, no build step, no package to publish. Drop a directory in and DSH picks it up. Edits apply without a restart.
 
+## What you need
+
+| Prerequisite | Required? | Notes |
+|---|---|---|
+| **Node.js** | Yes | Install the LTS build from [nodejs.org](https://nodejs.org) |
+| **DSH** | **No pre-install** | `npx` fetches it on demand; `~/.dsh/` is created on first run |
+| **DeepSeek API key** | To actually use it | Get one at [platform.deepseek.com](https://platform.deepseek.com), then `export DEEPSEEK_API_KEY=sk-…` |
+
+Skills can be installed *before* DSH ever runs. No need to initialize anything first.
+
 ## Install
 
 ### Easiest: let your agent do it
@@ -17,7 +27,7 @@ https://github.com/pingfanfan/dsh-skills/blob/main/INSTALL-FOR-AGENTS.md
 install this
 ```
 
-Skills are plain Markdown, so the agent only copies files. No build, no npm install.
+It checks Node, DSH, and the API key first, then copies files. Skills are plain Markdown: no build, no npm install.
 
 ### Or run one command
 

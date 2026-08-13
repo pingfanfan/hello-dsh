@@ -23,6 +23,18 @@
 
 ## 第 0 步：装 DSH
 
+### 你需要什么
+
+| 前置 | 必需吗 | 缺了会怎样 |
+|---|---|---|
+| **Node.js** | 是 | `npx` 命令不存在，什么都做不了 |
+| **DSH** | **不用预装** | `npx` 自动拉取 |
+| **API Key** | 用的时候要 | 报 `MISSING_CREDENTIAL` |
+
+只有 Node.js 需要你自己装（[nodejs.org](https://nodejs.org)，LTS 版）。
+
+### 拉起 DSH
+
 ```sh
 npx @deepseek-ai/dsh --version
 ```
@@ -31,7 +43,11 @@ npx @deepseek-ai/dsh --version
 0.1.0-rc.6
 ```
 
-首次运行会下载，慢是正常的。
+首次运行会下载，慢是正常的，不是卡死。
+
+**DSH 不需要提前安装。** `npx` 按需拉取，`~/.dsh/` 目录也是首次运行时自动生成的。
+
+顺带一个实测结论：**技能可以在 DSH 第一次运行之前就放好。** 把技能丢进一个从没跑过 DSH 的目录，第一次运行就能发现它们，不用先初始化。
 
 配置 API Key，**推荐用环境变量**（不落盘）：
 
@@ -39,7 +55,7 @@ npx @deepseek-ai/dsh --version
 export DEEPSEEK_API_KEY=sk-你的key
 ```
 
-跑一次生成目录结构：
+跑一次确认模型链路也通了：
 
 ```sh
 npx @deepseek-ai/dsh --profile headless "只回答两个字：收到"
@@ -49,7 +65,15 @@ npx @deepseek-ai/dsh --profile headless "只回答两个字：收到"
 收到
 ```
 
-到这里 DSH 就通了，`~/.dsh/` 目录也生成好了。
+**没配 Key 的话会看到这个：**
+
+```
+dsh: MISSING_CREDENTIAL: llm-deepseek: no API key for provider route "deepseek-official";
+store DEEPSEEK_API_KEY through the credentials service (the web Models page writes it),
+or export DEEPSEEK_API_KEY in the launching environment
+```
+
+看到就知道是缺 Key，不是别的问题。
 
 ---
 
