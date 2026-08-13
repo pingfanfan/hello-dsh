@@ -109,6 +109,60 @@ def code_block(lines: list[str]) -> str:
     )
 
 
+PLATFORM = "wechat"
+
+
+def render_table(header: list[str], rows: list[list[str]], platform: str) -> str:
+    """微信保留 <table>；今日头条会把表格结构整个剥掉，改用卡片式列表。"""
+    if platform == "wechat":
+        th = "".join(
+            f'<th style="padding:11px 13px;text-align:left;font-size:14px;font-weight:600;'
+            f'background:{C["quote_bg"]};border-bottom:2px solid {C["border"]};'
+            f'color:{C["muted"]};">{inline(c)}</th>'
+            for c in header
+        )
+        tr = "".join(
+            "<tr>"
+            + "".join(
+                f'<td style="padding:11px 13px;font-size:14px;vertical-align:top;'
+                f'border-bottom:1px solid {C["border"]};line-height:1.7;">{inline(c)}</td>'
+                for c in r
+            )
+            + "</tr>"
+            for r in rows
+        )
+        return (
+            f'<section style="overflow-x:auto;margin:22px 0;">'
+            f'<table style="width:100%;border-collapse:collapse;">'
+            f"<thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></section>"
+        )
+
+    # 头条版：每行一张卡片，字段名 + 值上下排列，纯 <p> 结构不会被剥
+    cards = []
+    for r in rows:
+        parts = []
+        for idx, cell in enumerate(r):
+            label = header[idx] if idx < len(header) else ""
+            if idx == 0:
+                parts.append(
+                    f'<p style="margin:0 0 6px;font-size:15px;font-weight:600;'
+                    f'color:{C["text"]};line-height:1.6;">{inline(cell)}</p>'
+                )
+            else:
+                parts.append(
+                    f'<p style="margin:0;font-size:14px;color:{C["muted"]};'
+                    f'line-height:1.7;">'
+                    f'<span style="color:{C["accent"]};">{esc(label)}：</span>'
+                    f"{inline(cell)}</p>"
+                )
+        cards.append(
+            f'<section style="margin:0 0 10px;padding:13px 16px;'
+            f'background:{C["quote_bg"]};border-left:3px solid {C["accent"]};'
+            f'border-radius:0 6px 6px 0;">' + "".join(parts) + "</section>"
+        )
+    return f'<section style="margin:22px 0;">' + "".join(cards) + "</section>"
+
+
 def convert(md: str, img_base: str) -> str:
     lines = md.split("\n")
     html, i, n = [], 0, len(lines)
@@ -135,27 +189,7 @@ def convert(md: str, img_base: str) -> str:
             while i < n and lines[i].startswith("|"):
                 rows.append([c.strip() for c in lines[i].strip("|").split("|")])
                 i += 1
-            th = "".join(
-                f'<th style="padding:11px 13px;text-align:left;font-size:14px;font-weight:600;'
-                f'background:{C["quote_bg"]};border-bottom:2px solid {C["border"]};'
-                f'color:{C["muted"]};">{inline(c)}</th>'
-                for c in header
-            )
-            tr = "".join(
-                "<tr>"
-                + "".join(
-                    f'<td style="padding:11px 13px;font-size:14px;vertical-align:top;'
-                    f'border-bottom:1px solid {C["border"]};line-height:1.7;">{inline(c)}</td>'
-                    for c in r
-                )
-                + "</tr>"
-                for r in rows
-            )
-            html.append(
-                f'<section style="overflow-x:auto;margin:22px 0;">'
-                f'<table style="width:100%;border-collapse:collapse;">'
-                f"<thead><tr>{th}</tr></thead><tbody>{tr}</tbody></table></section>"
-            )
+            html.append(render_table(header, rows, PLATFORM))
             continue
 
         # 图片
@@ -289,7 +323,11 @@ def main():
         print(__doc__)
         sys.exit(1)
 
-    src = Path(sys.argv[1])
+    global PLATFORM
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    PLATFORM = "toutiao" if "--toutiao" in sys.argv else "wechat"
+
+    src = Path(args[0])
     md = src.read_text(encoding="utf-8")
 
     # 剥掉标题后的元信息块（引用行 + 分隔线）
@@ -316,13 +354,18 @@ def main():
 </div>
 </body>"""
 
-    dst = src.parent / (src.stem.replace("-源稿", "") + ".html")
+    suffix = "-头条" if PLATFORM == "toutiao" else ""
+    dst = src.parent / (src.stem.replace("-源稿", "") + suffix + ".html")
     dst.write_text(out, encoding="utf-8")
 
-    print(f"已生成 {dst}")
+    plat = "今日头条" if PLATFORM == "toutiao" else "微信公众号"
+    print(f"已生成 {dst}  [{plat}]")
     print(f"  代码块 {body.count('background:' + C['block_bg'])} 个（每行独立 <p>，微信不会吃掉换行）")
     print(f"  可点击链接 {body.count('<a href')} 个")
-    print(f"  表格 {body.count('<table')} 个")
+    if PLATFORM == "wechat":
+        print(f"  表格 {body.count('<table')} 个（<table> 标签）")
+    else:
+        print(f"  表格 0 个（已改为卡片式列表，头条不会剥掉）")
     print(f"  图片 {body.count('<img')} 张")
     print(f"  行内代码 {body.count('<code')} 处")
 
