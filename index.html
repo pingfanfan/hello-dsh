@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hello DSH — DeepSeek Harness 入门第一课</title>
+<meta name="description" content="从「怎么打开终端」开始，30 分钟做出你的第一个 DeepSeek Harness 插件。零基础中文教程，10 步，每步带检查点。">
+<meta property="og:title" content="Hello DSH — DeepSeek Harness 入门第一课">
+<meta property="og:description" content="从零开始，30 分钟做出你的第一个 DSH 插件。10 步，每步带检查点。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://learn-dsh.com">
+<meta property="og:image" content="https://learn-dsh.com/assets/05-plugin-list-133.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐋</text></svg>">
+<style>
+:root{
+  --bg:#fbfcfe; --panel:#fff; --line:#e6ebf2; --line-strong:#d3dbe6;
+  --text:#0f1e33; --muted:#5b6b83; --subtle:#8a99ae;
+  --brand:#2563eb; --brand-soft:#eef4ff; --accent:#0891b2; --ok:#059669;
+  --code-bg:#f5f7fa;
+  --radius:14px; --maxw:1080px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0a1220; --panel:#101b2d; --line:#1e2c42; --line-strong:#2b3d59;
+    --text:#e8f0fb; --muted:#9fb0c8; --subtle:#71829a;
+    --brand:#5b9bff; --brand-soft:#13233d; --accent:#22b8d4; --ok:#34d399;
+    --code-bg:#0d1728;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0a1220; --panel:#101b2d; --line:#1e2c42; --line-strong:#2b3d59;
+  --text:#e8f0fb; --muted:#9fb0c8; --subtle:#71829a;
+  --brand:#5b9bff; --brand-soft:#13233d; --accent:#22b8d4; --ok:#34d399;
+  --code-bg:#0d1728;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:var(--code-bg);padding:.15em .4em;border-radius:5px;border:1px solid var(--line)}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* hero */
+.hero{padding:72px 0 56px;text-align:center;border-bottom:1px solid var(--line)}
+.eyebrow{display:inline-block;font-size:13px;color:var(--accent);background:var(--brand-soft);border:1px solid var(--line-strong);padding:5px 14px;border-radius:999px;margin-bottom:22px;font-weight:500}
+h1{font-size:clamp(34px,5.5vw,54px);line-height:1.15;margin:0 0 18px;letter-spacing:-.02em;font-weight:700}
+.lede{font-size:clamp(17px,2.2vw,20px);color:var(--muted);margin:0 auto 32px;max-width:660px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.btn{display:inline-block;padding:13px 30px;border-radius:10px;font-weight:600;font-size:16px;border:1px solid transparent;transition:transform .12s ease}
+.btn:hover{text-decoration:none;transform:translateY(-1px)}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-ghost{background:var(--panel);color:var(--text);border-color:var(--line-strong)}
+.meta{font-size:14px;color:var(--subtle)}
+
+/* sections */
+section{padding:60px 0;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(24px,3.2vw,32px);margin:0 0 14px;letter-spacing:-.01em;font-weight:700}
+.sub{color:var(--muted);margin:0 0 32px;max-width:720px}
+
+/* proof */
+.proof{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}
+@media(max-width:820px){.proof{grid-template-columns:1fr}}
+.shot{width:100%;border-radius:var(--radius);border:1px solid var(--line-strong);display:block;background:var(--panel)}
+.big{font-size:60px;font-weight:800;color:var(--brand);line-height:1;letter-spacing:-.03em}
+.plugin-list{list-style:none;padding:0;margin:20px 0 0}
+.plugin-list li{padding:9px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:baseline;font-size:15px}
+.plugin-list li:last-child{border-bottom:none}
+.plugin-list code{flex:0 0 auto;min-width:108px;color:var(--accent)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:14px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;transition:border-color .15s ease}
+.step:hover{border-color:var(--brand)}
+.step .n{font-size:12px;color:var(--subtle);font-weight:600;letter-spacing:.06em}
+.step .t{font-weight:600;margin:5px 0 4px;font-size:15px}
+.step .d{font-size:13.5px;color:var(--muted);line-height:1.6}
+.step.key{border-color:var(--brand);background:var(--brand-soft)}
+
+/* routes */
+.routes{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.routes{grid-template-columns:1fr}}
+.route{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.route h3{margin:0 0 8px;font-size:19px}
+.route .tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:999px;margin-bottom:12px;font-weight:600}
+.tag-easy{background:rgba(5,150,105,.12);color:var(--ok)}
+.tag-hard{background:rgba(37,99,235,.12);color:var(--brand)}
+.route p{margin:0 0 10px;color:var(--muted);font-size:14.5px}
+.route pre{background:var(--code-bg);border:1px solid var(--line);border-radius:9px;padding:13px;overflow-x:auto;margin:0;font-size:13px;line-height:1.6}
+
+/* findings */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;font-size:13px;color:var(--subtle);letter-spacing:.04em;text-transform:uppercase}
+tr:last-child td{border-bottom:none}
+
+/* footer */
+footer{padding:44px 0 56px;color:var(--subtle);font-size:14px;text-align:center}
+footer a{color:var(--muted)}
+.toggle{position:fixed;top:16px;right:16px;background:var(--panel);border:1px solid var(--line-strong);color:var(--text);border-radius:9px;padding:7px 11px;cursor:pointer;font-size:14px;z-index:10}
+</style>
+</head>
+<body>
+<button class="toggle" id="t" aria-label="切换主题">◐</button>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">DeepSeek Harness 入门第一课</span>
+    <h1>Hello DSH</h1>
+    <p class="lede">从「怎么打开终端」开始，30 分钟做出你的第一个插件。<br>10 步，每步带检查点，看到指定结果才往下走。</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="docs/hello-dsh.md">开始学 →</a>
+      <a class="btn btn-ghost" href="https://github.com/pingfanfan/hello-dsh">GitHub</a>
+    </div>
+    <p class="meta">零基础可用 · 22 个中文技能实例 · 实测于 DSH 0.1.0-rc.6</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>先说清楚「万物皆可插件」</h2>
+    <p class="sub">DSH 的第一句自我介绍是 "Everything is a Plugin"。这不是宣传语。</p>
+    <div class="proof">
+      <div>
+        <img class="shot" src="assets/05-plugin-list-133.png" alt="DSH 插件列表显示 133 个插件">
+      </div>
+      <div>
+        <div class="big">133</div>
+        <p style="color:var(--muted);margin:10px 0 0">装好之后点 Settings → Plugins → Plugin list，右上角这个数字。往下翻会看到：</p>
+        <ul class="plugin-list">
+          <li><code>llm</code><span>跟模型 API 说话的那层</span></li>
+          <li><code>agent-loop</code><span><strong>agent 的主循环，整个产品的心脏</strong></span></li>
+          <li><code>tools</code><span>工具注册表</span></li>
+          <li><code>webserver</code><span>你正在看的网页服务器</span></li>
+          <li><code>ui-sidebar</code><span>左边那条侧边栏</span></li>
+        </ul>
+        <p style="color:var(--muted);margin-top:18px;font-size:14.5px">不是「支持插件扩展」，是这个产品<strong>本身</strong>就是 133 个插件拼出来的。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>两条路，先走短的那条</h2>
+    <p class="sub">给 DSH 加东西有两种方式。能用大白话说清楚要它怎么做的，走第一条。</p>
+    <div class="routes">
+      <div class="route">
+        <span class="tag tag-easy">5 分钟 · 不用写代码</span>
+        <h3>写一个文本文件</h3>
+        <p>叫「技能」。存盘即生效，不用编译、不用安装、不用重启。</p>
+        <pre>~/.dsh/skills/hello-dsh/SKILL.md
+
+---
+name: hello-dsh
+description: 当用户说「hello dsh」时使用
+---
+
+请原样输出这一行：
+**HELLO DSH**</pre>
+      </div>
+      <div class="route">
+        <span class="tag tag-hard">半小时起 · TypeScript</span>
+        <h3>写一个代码插件</h3>
+        <p>要注册新工具、接外部服务、改界面时才需要。教程第 9 步给了完整路径和三个必踩的报错。</p>
+        <pre>export const name = 'my-plugin'
+export const inject = ['tools']
+
+export function apply(ctx) {
+  ctx.tools.register(...)
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>十步</h2>
+    <p class="sub">每一步末尾有个检查点，看到指定结果才能往下走。前 8 步约 30 分钟。</p>
+    <div class="steps">
+      <div class="step"><div class="n">STEP 1</div><div class="t">打开终端</div><div class="d">命令行就是一个能输文字命令的窗口，不可怕</div></div>
+      <div class="step"><div class="n">STEP 2</div><div class="t">装 Node.js</div><div class="d">唯一需要你自己装的东西</div></div>
+      <div class="step"><div class="n">STEP 3</div><div class="t">启动 DSH</div><div class="d">不用单独安装，一条命令自动下载</div></div>
+      <div class="step"><div class="n">STEP 4</div><div class="t">配置密钥</div><div class="d">全程在网页上点，不用碰环境变量</div></div>
+      <div class="step"><div class="n">STEP 5</div><div class="t">选一个工作区</div><div class="d">不选发不出消息，这里最容易卡住</div></div>
+      <div class="step key"><div class="n">STEP 6</div><div class="t">亲眼看到 133 个插件</div><div class="d">不用操作，但这一步是理解 DSH 的关键</div></div>
+      <div class="step key"><div class="n">STEP 7</div><div class="t">做第一个插件</div><div class="d">一个 Markdown 文件，五分钟</div></div>
+      <div class="step key"><div class="n">STEP 8</div><div class="t">看它的生命周期</div><div class="d">删掉文件，看模型怎么反应。整个教程最值得跑的一步</div></div>
+      <div class="step"><div class="n">STEP 9</div><div class="t">接下来做什么</div><div class="d">写更多技能，或者判断什么时候该写代码插件</div></div>
+      <div class="step"><div class="n">STEP 10</div><div class="t">原理（选读）</div><div class="d">Cordis 论文讲了什么，不读不影响用</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>删掉那个文件，它会怎么反应</h2>
+    <p class="sub">这是教程第 8 步。不重启 DSH，直接把技能文件删掉，再问一次。</p>
+    <div class="proof">
+      <div><img class="shot" src="assets/10-skill-removed-web.png" alt="删掉技能后模型的反应"></div>
+      <div>
+        <p style="color:var(--muted)">它的执行轨迹里出现 <code>Read · Error: not found</code>，然后给了这么一段回答：</p>
+        <blockquote style="margin:16px 0;padding:14px 18px;border-left:3px solid var(--brand);background:var(--panel);border-radius:0 9px 9px 0;color:var(--muted);font-size:14.5px">
+          所以这次我没法再从本地文件读出那句暗号了，如果我现在把它再输出一遍，那就会是凭记忆复述而不是读自本地文件，那样就不诚实了。
+        </blockquote>
+        <p style="color:var(--muted);font-size:14.5px">它这一轮对话里明明见过那句暗号，但它知道那不算数，因为来源文件已经没了。</p>
+        <p style="margin-top:16px"><strong>文件出现功能就在，文件消失功能就没了，中间没有任何重启、安装、注册的动作。</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>写这份教程时实测到的行为</h2>
+    <p class="sub">在两台干净的 Mac 上从头跑了 DSH。下面每一条都会让新手卡住，而且不报错。全部实测于 0.1.0-rc.6。</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th style="width:44%">发现</th><th>为什么重要</th></tr></thead>
+        <tbody>
+          <tr><td>网页版出厂时 <code>tool-skill</code> 和 <code>skill-filesystem</code> 是禁用的，<code>headless</code> 是启用的</td><td>同一个技能命令行能用、网页版静默失效，没有任何报错</td></tr>
+          <tr><td>网页版必须先选工作区，发送按钮才激活</td><td>命令行版没这个限制，用 headless 验证时撞不上</td></tr>
+          <tr><td>旧进程占着 3080 时，页面照样能正常打开</td><td>新实例报 <code>EADDRINUSE</code> 退出，浏览器连的是旧进程，改什么配置都不生效</td></tr>
+          <tr><td><code>--patch</code> 是插入而非覆盖，插件会挂载两份</td><td>无害，但插件列表显示 7 个 skill 插件而不是 5 个</td></tr>
+          <tr><td>frontmatter 键名写成驼峰会丢弃整个技能，只留一条警告</td><td>官方有意的 fail-closed 设计，但不知道的话很难查</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>装 22 个现成的技能</h2>
+    <p class="sub">代码审查、系统化排查、写提交信息、安全审查等，都按 DeepSeek 官方那 11 个内置技能的写法来的。</p>
+    <div class="routes">
+      <div class="route">
+        <span class="tag tag-easy">最省事</span>
+        <h3>让你的 AI 装</h3>
+        <p>把这个链接丢给 Codex、Claude Code 或 DSH 自己，说「照这个装」：</p>
+        <pre>https://github.com/pingfanfan/hello-dsh
+/blob/main/INSTALL-FOR-AGENTS.md
+
+照这个装</pre>
+      </div>
+      <div class="route">
+        <span class="tag tag-hard">或者自己跑</span>
+        <h3>一条命令</h3>
+        <p>装到 <code>~/.dsh/skills/</code>，DSH 自动发现，不用重启。</p>
+        <pre>git clone https://github.com/pingfanfan/hello-dsh.git
+cd hello-dsh && ./install.sh</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><a href="docs/hello-dsh.md">教程</a> · <a href="https://github.com/pingfanfan/hello-dsh">GitHub</a> · <a href="https://github.com/deepseek-ai/deepseek-harness">DeepSeek Harness</a> · <a href="https://github.com/cordiverse/paper">Cordis 论文</a></p>
+    <p style="margin-top:14px">MIT License · 非官方社区项目，与 DeepSeek 无隶属关系</p>
+  </div>
+</footer>
+
+<script>
+const t=document.getElementById('t');
+const saved=localStorage.getItem('theme');
+if(saved)document.documentElement.setAttribute('data-theme',saved);
+t.onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':(cur==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('theme',next);
+};
+</script>
+</body>
+</html>
