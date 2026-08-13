@@ -36,10 +36,23 @@ Remove:
 
 You can also just copy any directory under `skills/` into `~/.dsh/skills/`. The script is a convenience, not a requirement.
 
+## First lesson: Hello Skill
+
+Once installed, just say this to DSH:
+
+```
+hello skill
+```
+
+It prints a passphrase that could only have come from a local file, then walks you through it one layer at a time: what the file is, how the lifecycle works, and the Cordis theory behind it.
+
+Full walkthrough: [docs/hello-skill.md](docs/hello-skill.md) — with real session transcripts, including a delete-then-restore lifecycle demo that never restarts anything.
+
 ## The skills
 
 | Skill | Use it when |
 |---|---|
+| `hello-skill` | **Start here**: verify the skill system, learn the lifecycle |
 | `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, discovery |
 | `dsh-skill-dev` | Writing a skill, or a skill is not being discovered |
 | `dsh-first-plugin` | Building and installing your first plugin (tested walkthrough) |
