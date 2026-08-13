@@ -34,23 +34,31 @@ cd dsh-skills
 ./install.sh --uninstall
 ```
 
-也可以直接把 `skills/` 下的任意目录拷进 `~/.dsh/skills/`——脚本只是省事，不是必需的。
+也可以直接把 `skills/` 下的任意目录拷进 `~/.dsh/skills/`，脚本只是省事，不是必需的。
 
 ## 技能清单
 
 | 技能 | 什么时候用 |
 |---|---|
 | `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限、技能发现 |
+| `dsh-skill-dev` | 给 DSH 写技能，或技能没被发现 |
+| `dsh-troubleshoot` | DSH 起不来、配置没生效、UNKNOWN_TOOL、技能不见了 |
 | `code-review-cn` | 审查代码改动、PR、diff |
-| `debug-systematically` | 遇到 bug、测试失败、"本来是好的现在坏了" |
+| `debug-systematically` | 遇到 bug、测试失败、本来是好的现在坏了 |
 | `explain-codebase` | 快速理解陌生项目 |
-| `commit-message` | 写 git 提交信息、拆分改动 |
+| `refactor-safely` | 重构、拆函数、消除重复 |
+| `test-first` | 写测试、实现功能、修缺陷 |
+| `api-design` | 设计接口、加公开方法、定数据结构 |
+| `commit-message` | 写提交信息、拆分改动 |
+| `pr-description` | 写 PR 描述、准备评审 |
+| `web-research` | 联网查资料、核实事实、技术选型 |
+| `write-tech-cn` | 写中文文档、README、技术博客 |
 
 技能持续增加中。
 
 ## 设计原则
 
-**按官方范式写。** DSH 仓库里有 [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills)——DeepSeek 官方自己在用的 11 个技能。本仓库的写法参照它们：明确事实来源、给判断依据而非清单、宁可少而准。
+**按官方范式写。** DSH 仓库里有 [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills)，DeepSeek 官方自己在用的 11 个技能。本仓库的写法参照它们：明确事实来源、给判断依据而非清单、宁可少而准。
 
 **中文优先。** 官方内置技能是英文的。
 

@@ -40,11 +40,19 @@ You can also just copy any directory under `skills/` into `~/.dsh/skills/`. The 
 
 | Skill | Use it when |
 |---|---|
-| `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, skill discovery |
+| `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, discovery |
+| `dsh-skill-dev` | Writing a skill, or a skill is not being discovered |
+| `dsh-troubleshoot` | DSH won't start, config not taking effect, UNKNOWN_TOOL, missing skills |
 | `code-review-cn` | Reviewing a change, PR, or diff |
 | `debug-systematically` | A bug, a failing test, "it worked yesterday" |
 | `explain-codebase` | Getting oriented in an unfamiliar project |
+| `refactor-safely` | Refactoring, splitting functions, removing duplication |
+| `test-first` | Writing tests, implementing a feature, fixing a bug |
+| `api-design` | Designing an interface, adding a public method |
 | `commit-message` | Writing commit messages, splitting changes |
+| `pr-description` | Writing a PR description, preparing review |
+| `web-research` | Researching online, verifying facts, evaluating options |
+| `write-tech-cn` | Writing Chinese docs, READMEs, technical posts |
 
 More are being added.
 
