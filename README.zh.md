@@ -42,17 +42,24 @@ cd dsh-skills
 |---|---|
 | `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限、技能发现 |
 | `dsh-skill-dev` | 给 DSH 写技能，或技能没被发现 |
+| `dsh-plugin-dev` | 给 DSH 写插件，或插件没加载没注入 |
 | `dsh-troubleshoot` | DSH 起不来、配置没生效、UNKNOWN_TOOL、技能不见了 |
+| `plan-before-code` | 任务要改多处、有不确定性、超过半天 |
 | `code-review-cn` | 审查代码改动、PR、diff |
 | `debug-systematically` | 遇到 bug、测试失败、本来是好的现在坏了 |
 | `explain-codebase` | 快速理解陌生项目 |
 | `refactor-safely` | 重构、拆函数、消除重复 |
 | `test-first` | 写测试、实现功能、修缺陷 |
 | `api-design` | 设计接口、加公开方法、定数据结构 |
+| `error-handling` | 设计错误处理、决定该抛还是该返回 |
+| `perf-optimize` | 优化性能、排查慢的原因 |
+| `security-review-cn` | 安全审查、评估攻击面、检查凭据处理 |
 | `commit-message` | 写提交信息、拆分改动 |
 | `pr-description` | 写 PR 描述、准备评审 |
-| `web-research` | 联网查资料、核实事实、技术选型 |
 | `write-tech-cn` | 写中文文档、README、技术博客 |
+| `write-docs-cn` | 写或整理项目文档、API 说明、教程 |
+| `web-research` | 联网查资料、核实事实、技术选型 |
+| `ask-good-questions` | 提技术问题、报 bug、写 issue |
 
 技能持续增加中。
 

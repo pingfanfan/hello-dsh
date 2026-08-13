@@ -42,17 +42,24 @@ You can also just copy any directory under `skills/` into `~/.dsh/skills/`. The 
 |---|---|
 | `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, discovery |
 | `dsh-skill-dev` | Writing a skill, or a skill is not being discovered |
+| `dsh-plugin-dev` | Writing a plugin, or a plugin fails to load or inject |
 | `dsh-troubleshoot` | DSH won't start, config not taking effect, UNKNOWN_TOOL, missing skills |
+| `plan-before-code` | A task spanning several files, with unknowns, or over half a day |
 | `code-review-cn` | Reviewing a change, PR, or diff |
 | `debug-systematically` | A bug, a failing test, "it worked yesterday" |
 | `explain-codebase` | Getting oriented in an unfamiliar project |
 | `refactor-safely` | Refactoring, splitting functions, removing duplication |
 | `test-first` | Writing tests, implementing a feature, fixing a bug |
 | `api-design` | Designing an interface, adding a public method |
+| `error-handling` | Designing error handling, deciding throw vs return |
+| `perf-optimize` | Optimizing performance, finding what's slow |
+| `security-review-cn` | Security review, attack surface, credential handling |
 | `commit-message` | Writing commit messages, splitting changes |
 | `pr-description` | Writing a PR description, preparing review |
-| `web-research` | Researching online, verifying facts, evaluating options |
 | `write-tech-cn` | Writing Chinese docs, READMEs, technical posts |
+| `write-docs-cn` | Writing or organizing project docs, API references, tutorials |
+| `web-research` | Researching online, verifying facts, evaluating options |
+| `ask-good-questions` | Asking a technical question, reporting a bug, filing an issue |
 
 More are being added.
 
