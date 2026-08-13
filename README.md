@@ -8,51 +8,49 @@ Skills are plain Markdown — no code, no build step, no package to publish. Dro
 
 ## Install
 
+### Easiest: let your agent do it
+
+Hand this link to Codex, Claude Code, or DSH itself:
+
+```
+https://github.com/pingfanfan/dsh-skills/blob/main/INSTALL-FOR-AGENTS.md
+install this
+```
+
+Skills are plain Markdown, so the agent only copies files. No build, no npm install.
+
+### Or run one command
+
 ```sh
 git clone https://github.com/pingfanfan/dsh-skills.git
-cd dsh-skills
-./install.sh
+cd dsh-skills && ./install.sh
 ```
 
-Installs to `~/.dsh/skills/`. DSH discovers them automatically — **no restart needed**.
+Installs to `~/.dsh/skills/`. DSH discovers them automatically — **no restart**.
 
-See what it would do first:
+Preview first: `./install.sh --dry-run`
+Cross-agent directory: `./install.sh --agents-dir`
+Remove: `./install.sh --uninstall`
 
-```sh
-./install.sh --dry-run
-```
+You can also just copy any directory under `skills/` into `~/.dsh/skills/`.
 
-Install to the cross-agent shared directory (also readable by Claude Code and similar tools):
-
-```sh
-./install.sh --agents-dir      # → ~/.agents/skills/
-```
-
-Remove:
-
-```sh
-./install.sh --uninstall
-```
-
-You can also just copy any directory under `skills/` into `~/.dsh/skills/`. The script is a convenience, not a requirement.
-
-## First lesson: Hello Skill
+## First lesson: Hello DSH
 
 Once installed, just say this to DSH:
 
 ```
-hello skill
+hello dsh
 ```
 
-It prints a passphrase that could only have come from a local file, then walks you through it one layer at a time: what the file is, how the lifecycle works, and the Cordis theory behind it.
+It prints a passphrase that could only have come from a local file, then walks you through it one layer at a time: what a skill is, how the lifecycle works, when to write a plugin instead, and the Cordis theory behind it.
 
-Full walkthrough: [docs/hello-skill.md](docs/hello-skill.md) — with real session transcripts, including a delete-then-restore lifecycle demo that never restarts anything.
+**Full walkthrough**: [docs/hello-dsh.md](docs/hello-dsh.md) — 20 minutes from zero to a working skill *and* a working plugin, with real transcripts including the three errors you will hit writing a plugin and their exact fixes.
 
 ## The skills
 
 | Skill | Use it when |
 |---|---|
-| `hello-skill` | **Start here**: verify the skill system, learn the lifecycle |
+| `hello-dsh` | **Start here**: verify the skill system, lifecycle, skill vs plugin, Cordis theory |
 | `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, discovery |
 | `dsh-skill-dev` | Writing a skill, or a skill is not being discovered |
 | `dsh-first-plugin` | Building and installing your first plugin (tested walkthrough) |

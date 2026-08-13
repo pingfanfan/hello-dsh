@@ -8,51 +8,49 @@
 
 ## 安装
 
+### 最省事：让你的 agent 装
+
+把这个链接丢给 Codex、Claude Code、或 DSH 自己：
+
+```
+https://github.com/pingfanfan/dsh-skills/blob/main/INSTALL-FOR-AGENTS.md
+照这个装
+```
+
+技能是纯 Markdown，agent 只需要拷贝文件，不用编译、不用 npm install。
+
+### 或者自己跑一条命令
+
 ```sh
 git clone https://github.com/pingfanfan/dsh-skills.git
-cd dsh-skills
-./install.sh
+cd dsh-skills && ./install.sh
 ```
 
-安装到 `~/.dsh/skills/`。DSH 会自动发现，**无需重启**。
+装到 `~/.dsh/skills/`，DSH 自动发现，**不用重启**。
 
-先看会发生什么：
+先看会做什么：`./install.sh --dry-run`
+装到跨 agent 共享目录：`./install.sh --agents-dir`
+移除：`./install.sh --uninstall`
 
-```sh
-./install.sh --dry-run
-```
+也可以直接把 `skills/` 下任意目录拷进 `~/.dsh/skills/`，脚本只是省事。
 
-装到跨 agent 的共享目录（Claude Code 等工具也能用）：
-
-```sh
-./install.sh --agents-dir      # → ~/.agents/skills/
-```
-
-移除：
-
-```sh
-./install.sh --uninstall
-```
-
-也可以直接把 `skills/` 下的任意目录拷进 `~/.dsh/skills/`，脚本只是省事，不是必需的。
-
-## 第一课：Hello Skill
+## 第一课：Hello DSH
 
 装完之后，直接对 DSH 说：
 
 ```
-hello skill
+hello dsh
 ```
 
-它会输出一句只可能来自本地文件的暗号，然后可以一层一层往下讲：这个文件是什么、生命周期怎么走、背后的 Cordis 理论是什么。
+它会输出一句只可能来自本地文件的暗号，然后按层往下讲：技能是什么、生命周期怎么走、什么时候该写插件、背后的 Cordis 理论是什么。
 
-完整教程：[docs/hello-skill.md](docs/hello-skill.md)，里面有真实运行记录，包括「删掉技能 → 放回来」全程不重启的生命周期演示。
+**完整教程**：[docs/hello-dsh.md](docs/hello-dsh.md) — 20 分钟从零跑通技能和插件，每一步都有真实运行记录，包括写插件时会踩的三个报错和它们的确切修法。
 
 ## 技能清单
 
 | 技能 | 什么时候用 |
 |---|---|
-| `hello-skill` | **第一课**：验证技能系统，分层讲解生命周期与原理 |
+| `hello-dsh` | **第一课**：验证技能系统，按层讲解生命周期、技能 vs 插件、Cordis 原理 |
 | `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限、技能发现 |
 | `dsh-skill-dev` | 给 DSH 写技能，或技能没被发现 |
 | `dsh-first-plugin` | 从零做出并装上第一个插件（实测流程 + 三个报错） |
