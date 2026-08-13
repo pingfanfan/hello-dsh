@@ -1,0 +1,14 @@
+# 在 Web UI 里启用技能
+#
+# DSH 的 web profile 默认关闭了技能相关组件（headless profile 是开的）。
+# 用这个 overlay 打开：
+#
+#   npx @deepseek-ai/dsh web --patch ./enable-skills-in-web.yml
+#
+# 实测于 DSH 0.1.0-rc.6。如果哪天官方默认打开了，这个文件就不需要了。
+- id: skill-filesystem
+  disabled: false
+- id: tool-skill
+  disabled: false
+- id: skill-badge
+  disabled: false

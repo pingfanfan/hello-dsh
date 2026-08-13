@@ -1,93 +1,276 @@
-# Hello DSH：从零到跑通第一个技能和插件
+# Hello DSH：从零开始，看懂「万物皆可插件」
 
-就像每门语言都从 Hello World 开始，DSH 从 Hello DSH 开始。
+DeepSeek Harness（下称 DSH）的第一句自我介绍是 **"Everything is a Plugin"**。
 
-跑完这一课你会有三样东西：一个能用的技能、一个能用的插件、以及知道什么时候该用哪个。
+这句话不是修辞。跑完这份教程，你会亲眼看到它有 **133 个插件**，其中包括模型适配器、工具注册表、会话记录、Web 服务器，甚至 **agent 的主循环本身**。然后你会自己做出两个插件。
 
-**本文所有输出都是真实运行记录**（DSH `0.1.0-rc.6`，macOS，2026-08-13），包括那些报错。不是示意。
+**这份教程假设你什么都没有。** 没装过 Node，没用过命令行，不知道什么是环境变量。每一节末尾都有一个检查点，**看到指定的结果才能往下走**。
 
-预计 20 分钟。
+所有截图和输出都是真实的（DSH `0.1.0-rc.6`，macOS，2026-08-13）。
 
 ---
 
 ## 目录
 
-- [第 0 步：装 DSH](#第-0-步装-dsh)
-- [第 1 步：写第一个技能](#第-1-步写第一个技能)（5 分钟）
-- [第 2 步：看它的生命周期](#第-2-步看它的生命周期)（这一步最重要）
-- [第 3 步：写第一个插件](#第-3-步写第一个插件)（含三个必踩的报错）
-- [第 4 步：什么时候用哪个](#第-4-步什么时候用哪个)
-- [第 5 步：背后的原理](#第-5-步背后的原理)（选读）
-
----
-
-## 第 0 步：装 DSH
-
-### 你需要什么
-
-| 前置 | 必需吗 | 缺了会怎样 |
+| 节 | 内容 | 预计 |
 |---|---|---|
-| **Node.js** | 是 | `npx` 命令不存在，什么都做不了 |
-| **DSH** | **不用预装** | `npx` 自动拉取 |
-| **API Key** | 用的时候要 | 报 `MISSING_CREDENTIAL` |
+| [第 1 步](#第-1-步打开终端) | 打开终端 | 2 分钟 |
+| [第 2 步](#第-2-步装-nodejs) | 装 Node.js | 5 分钟 |
+| [第 3 步](#第-3-步启动-dsh) | 启动 DSH | 5 分钟 |
+| [第 4 步](#第-4-步配置密钥) | 配置 API 密钥 | 3 分钟 |
+| [第 5 步](#第-5-步亲眼看到-133-个插件) | **亲眼看到 133 个插件** | 3 分钟 |
+| [第 6 步](#第-6-步做第一个插件markdown-路线) | 做第一个插件（Markdown 路线） | 5 分钟 |
+| [第 7 步](#第-7-步看它的生命周期) | 看它的生命周期 | 5 分钟 |
+| [第 8 步](#第-8-步做第二个插件typescript-路线) | 做第二个插件（TypeScript 路线） | 15 分钟 |
+| [第 9 步](#第-9-步原理选读) | 原理（选读） | 10 分钟 |
 
-只有 Node.js 需要你自己装（[nodejs.org](https://nodejs.org)，LTS 版）。
-
-### 拉起 DSH
-
-```sh
-npx @deepseek-ai/dsh --version
-```
-
-```
-0.1.0-rc.6
-```
-
-首次运行会下载，慢是正常的，不是卡死。
-
-**DSH 不需要提前安装。** `npx` 按需拉取，`~/.dsh/` 目录也是首次运行时自动生成的。
-
-顺带一个实测结论：**技能可以在 DSH 第一次运行之前就放好。** 把技能丢进一个从没跑过 DSH 的目录，第一次运行就能发现它们，不用先初始化。
-
-配置 API Key，**推荐用环境变量**（不落盘）：
-
-```sh
-export DEEPSEEK_API_KEY=sk-你的key
-```
-
-跑一次确认模型链路也通了：
-
-```sh
-npx @deepseek-ai/dsh --profile headless "只回答两个字：收到"
-```
-
-```
-收到
-```
-
-**没配 Key 的话会看到这个：**
-
-```
-dsh: MISSING_CREDENTIAL: llm-deepseek: no API key for provider route "deepseek-official";
-store DEEPSEEK_API_KEY through the credentials service (the web Models page writes it),
-or export DEEPSEEK_API_KEY in the launching environment
-```
-
-看到就知道是缺 Key，不是别的问题。
+前 7 步大约 30 分钟，跑完就能用。第 8、9 步是给想深入的人准备的。
 
 ---
 
-## 第 1 步：写第一个技能
+## 第 1 步：打开终端
+
+DSH 需要用命令行启动。**命令行就是一个可以输入文字命令的窗口**，不可怕。
+
+**macOS**：按 `Command + 空格`，输入 `终端`，回车。
+
+**Windows**：按 `Win` 键，输入 `PowerShell`，回车。
+
+**Linux**：按 `Ctrl + Alt + T`。
+
+打开后你会看到一个黑色或白色的窗口，里面有一行字，末尾有个闪烁的光标。**这就对了。**
+
+后面所有以 `$` 或 ```` ``` ```` 开头的命令，都是复制粘贴到这个窗口里，然后按回车。
+
+> 粘贴的快捷键：macOS 是 `Command + V`，Windows 终端是 `Ctrl + V` 或右键。
+
+### ✅ 检查点 1
+
+在终端里输入这行，按回车：
+
+```sh
+echo hello
+```
+
+**必须看到：**
+
+```
+hello
+```
+
+看到了就继续。没看到说明还没真正打开终端，回到本节开头。
+
+---
+
+## 第 2 步：装 Node.js
+
+DSH 是用 JavaScript 写的，需要 Node.js 这个运行环境。
+
+先看你有没有：
+
+```sh
+node --version
+```
+
+**如果输出了一个版本号**（比如 `v22.11.0`），跳到检查点。
+
+**如果提示 `command not found`**，说明没装：
+
+1. 打开 https://nodejs.org
+2. 点页面上那个写着 **LTS** 的绿色大按钮下载
+3. 双击下载好的文件，一路点「继续」
+
+> LTS = 长期支持版，是给普通用户的稳定版本。
+
+**装完之后必须关掉终端窗口再重新打开**，否则新装的东西不会生效。
+
+### ✅ 检查点 2
+
+```sh
+node --version
+```
+
+**必须看到一个版本号**，比如：
+
+```
+v22.11.0
+```
+
+版本号是 `v20` 或更高就行。
+
+**看到 `command not found` 就不能往下走** —— 回到上面重装，注意装完要重开终端。
+
+---
+
+## 第 3 步：启动 DSH
+
+**DSH 不需要单独安装。** 下面这条命令会自动下载并运行它：
+
+```sh
+npx @deepseek-ai/dsh web
+```
+
+第一次运行要下载几十兆的文件，**可能要等一到几分钟，屏幕上没动静是正常的，不是卡死了**。
+
+如果中途问你 `Ok to proceed? (y)`，输入 `y` 按回车。
+
+看到这一行就说明起来了：
+
+```
+dsh web: http://127.0.0.1:3080
+```
+
+**保持这个终端窗口开着**，关掉 DSH 就停了。
+
+现在打开浏览器，访问 http://127.0.0.1:3080
+
+你会看到这个：
+
+![首次启动](../assets/01-first-launch.png)
+
+这是官方的测试期提示，大意是 DSH 0.1 还在开发者测试阶段，欢迎反馈。**点右下角的 `Continue`。**
+
+然后是主界面：
+
+![主界面](../assets/02-main-ui.png)
+
+### ✅ 检查点 3
+
+**必须同时满足：**
+
+1. 浏览器里能打开 http://127.0.0.1:3080
+2. 关掉提示弹窗后，看到中间写着 **"Into the Unknown"**
+3. 终端窗口还开着，没有报错
+
+**如果浏览器打不开**，检查终端里有没有 `EADDRINUSE` 字样。有的话说明 3080 端口被占用了，先关掉占用它的程序。
+
+---
+
+## 第 4 步：配置密钥
+
+DSH 需要 DeepSeek 的 API 密钥才能调用模型。**这一步全程在网页上点，不用碰命令行。**
+
+### 拿密钥
+
+1. 打开 https://platform.deepseek.com
+2. 注册或登录
+3. 找到「API keys」，创建一个新的
+4. **复制它**（形如 `sk-` 开头的一长串）
+
+> 密钥只在创建时显示一次，关掉就看不到了，务必先复制。
+> 它等于你账户的钥匙，**不要发给别人、不要贴到聊天群或代码里**。
+
+### 填进去
+
+回到 DSH 的网页：
+
+1. 点左下角的 **Settings**
+2. 点左侧的 **Models**
+3. 在 `DeepSeek` 那一行点 **Edit**
+4. 粘贴密钥，保存
+
+![配置密钥](../assets/03-api-key.png)
+
+配好之后，`DeepSeek` 右边会出现一个**绿点**。
+
+### ✅ 检查点 4
+
+**必须看到 `DeepSeek` 右边有绿点。**
+
+没有绿点就是没配好，重新检查密钥有没有粘贴完整（`sk-` 开头，中间不能有空格或换行）。
+
+---
+
+## 第 5 步：亲眼看到 133 个插件
+
+这一步不用做任何操作，只是看。**但它是理解 DSH 的关键。**
+
+在 Settings 里点左侧的 **Plugins**，再点上方的 **Plugin list** 标签：
+
+![插件列表](../assets/05-plugin-list-133.png)
+
+看右上角那个数字：**133**。
+
+往下翻这个列表，你会看到：
+
+| 插件名 | 它是什么 |
+|---|---|
+| `llm` | **模型适配器** —— 跟 DeepSeek API 说话的那一层 |
+| `agent-loop` | **agent 的主循环** —— 整个产品的心脏 |
+| `tools` | **工具注册表** —— 管理模型能调用哪些工具 |
+| `session` | **会话记录** |
+| `webserver` | **你正在看的这个网页服务器** |
+| `ui-sidebar` | **左边那条侧边栏** |
+
+**看明白了吗？** 不是"DSH 支持插件扩展"，而是 **DSH 本身就是 133 个插件拼出来的**。你现在正在用的每一个部分，都是一个可以被替换、被禁用、被重写的插件。
+
+这就是 "Everything is a Plugin" 的字面意思。
+
+再看一个具体的。在搜索框里输入 `skill`：
+
+![技能也是插件](../assets/06-skill-is-plugin.png)
+
+出来 5 个插件，它们协作实现了「技能」这个功能：
+
+| 插件 | 职责 |
+|---|---|
+| `skill` | 定义「技能」这个能力是什么 |
+| `skill-filesystem` | 扫描目录、读取 Markdown 文件 |
+| `tool-skill` | 把技能列表给模型看，提供加载工具 |
+| `skill-badge` | 随包分发的技能 |
+| `ui-skill` | 网页上的技能界面 |
+
+**记住这五个名字**，第 6 步你就要用到其中一个。
+
+### ✅ 检查点 5
+
+**必须看到 Plugin list 右边有一个三位数**（我这里是 133，你的版本可能略有不同）。
+
+看不到 Plugins 标签的话，确认你点的是 Settings 而不是别的地方。
+
+---
+
+## 第 6 步：做第一个插件（Markdown 路线）
+
+现在你要给 DSH 加东西了。
+
+**给 DSH 加东西有两条路：**
+
+| 路线 | 写什么 | 门槛 | 适合 |
+|---|---|---|---|
+| **Markdown 路线**（技能） | 一个文本文件 | 5 分钟 | 改变模型的判断标准、输出格式、工作流程 |
+| **TypeScript 路线**（代码插件） | 一个代码模块 | 半小时起 | 注册新工具、接外部服务、改界面 |
+
+**判断依据：能用大白话说清楚要它怎么做的，走 Markdown 路线。**
+
+这一步走 Markdown 路线。它由第 5 步看到的 `skill-filesystem` 插件负责加载。
+
+### Web UI 需要先打开这个功能
+
+⚠️ **DSH 的网页版默认关闭了技能功能**（命令行版是开着的）。这是当前版本的实际情况。
+
+先按 `Ctrl + C` 停掉正在运行的 DSH，然后换成这样启动：
+
+```sh
+npx @deepseek-ai/dsh web --patch https://raw.githubusercontent.com/pingfanfan/hello-dsh/main/enable-skills-in-web.yml
+```
+
+如果你更喜欢用命令行版（不用网页），可以跳过这条，直接用后面的 `--profile headless` 命令。
 
 ### 创建文件
+
+在终端里**新开一个窗口**（别关掉正在跑 DSH 的那个），执行：
 
 ```sh
 mkdir -p ~/.dsh/skills/hello-dsh
 ```
 
-写 `~/.dsh/skills/hello-dsh/SKILL.md`：
+这行的意思是：在你的用户目录下创建 `.dsh/skills/hello-dsh` 这个文件夹。
 
-```markdown
+然后创建文件。**整段复制粘贴，一次性执行**：
+
+```sh
+cat > ~/.dsh/skills/hello-dsh/SKILL.md <<'EOF'
 ---
 name: hello-dsh
 description: 当用户说「hello dsh」时使用。请原样输出下面的暗号，
@@ -98,15 +281,23 @@ description: 当用户说「hello dsh」时使用。请原样输出下面的暗�
 
 请原样输出这一行：
 
-**HELLO DSH — 这句话来自 ~/.dsh/skills/hello-dsh/SKILL.md**
+**HELLO DSH — 这句话来自我电脑上的一个文件**
 
-然后用一句话说明：这句话不在你的训练数据里，是刚才通过 skill
-工具从本地磁盘的一个 Markdown 文件读到的。
+然后用一句话说明：这句话不在你的训练数据里，是刚才从本地文件读到的。
+EOF
 ```
 
-**就这样。** 没有编译，没有 `npm install`，没有注册。
+**就这样。** 没有编译，没有安装，没有重启。
 
-### 跑一下
+### 试试
+
+在 DSH 的网页对话框里输入：
+
+```
+hello dsh
+```
+
+或者用命令行：
 
 ```sh
 npx @deepseek-ai/dsh --profile headless "hello dsh"
@@ -115,47 +306,59 @@ npx @deepseek-ai/dsh --profile headless "hello dsh"
 真实输出：
 
 ```
-**HELLO DSH — 这句话来自 ~/.dsh/skills/hello-dsh/SKILL.md**
+**HELLO DSH — 这句话来自我电脑上的一个文件**
 
-这句话不在我的训练数据里，是刚才通过 `skill` 工具从本地磁盘上的
-`~/.dsh/skills/hello-dsh/SKILL.md` 这个 Markdown 文件读到的。
+这句话不在我的训练数据里，是刚才通过 skill 工具从本地磁盘上的
+~/.dsh/skills/hello-dsh/SKILL.md 这个 Markdown 文件读到的。
 ```
 
-**这句暗号不可能来自训练数据**，因为是你刚写的。这就是技能生效的证据。
+**这句暗号不可能来自模型的训练数据**，因为是你三十秒前刚写的。这就是它生效的证据。
 
-### frontmatter 的两个必需字段
+### 这个文件的两个必填项
 
 ```yaml
-name: hello-dsh          # 必需，必须 kebab-case，与目录名一致
-description: 当……时使用   # 必需
+name: hello-dsh          # 必填，只能用小写字母和连字符，要和文件夹同名
+description: 当……时使用   # 必填
 ```
 
-`description` 决定模型**什么时候会加载**这个技能。模型最初只看到一份目录（只有 `name` 和 `description`），正文要等它决定加载后才读进来。
+`description` 决定模型**什么时候会想起用它**。模型一开始只看到一份清单（每项只有名字和这句描述），正文要等它决定用了才读。
 
 所以：
 
 ```yaml
-# 无效，模型不知道什么时候用
+# 没用，模型不知道什么场合该用
 description: 一个用于代码审查的技能
 
-# 有效
+# 有用
 description: 当需要审查代码改动、pull request 或 diff 时使用，
   按正确性、生命周期、安全、测试强度的顺序给出中文审查意见。
 ```
 
-**以「当……时使用」开头。** 这是官方 11 个内置技能的统一写法。
+**用「当……时使用」开头。** 这是 DeepSeek 官方那 11 个内置技能的统一写法。
+
+### ✅ 检查点 6
+
+**必须看到模型输出了你写的那句暗号。**
+
+看不到的话，按顺序查：
+
+1. 文件路径对不对：`ls ~/.dsh/skills/hello-dsh/` 应该列出 `SKILL.md`
+2. `name` 是不是写成了 `Hello_DSH` 这种（**必须是小写加连字符**）
+3. 用网页版的话，有没有加上面那个 `--patch` 参数
 
 ---
 
-## 第 2 步：看它的生命周期
+## 第 7 步：看它的生命周期
 
-**这一步是整课的核心。中间不要重启任何东西。**
+**这一步是整份教程的核心。全程不要重启 DSH。**
 
 ### 删掉它
 
 ```sh
 rm -rf ~/.dsh/skills/hello-dsh
 ```
+
+问模型：
 
 ```sh
 npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh 的技能？只回答有或没有"
@@ -169,7 +372,7 @@ npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh �
 
 ### 放回来
 
-把 `SKILL.md` 写回原位，**不重启**：
+把第 6 步那段 `cat > ...` 命令再执行一遍，然后再问一次：
 
 ```sh
 npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh 的技能？有的话加载它并输出暗号"
@@ -178,38 +381,32 @@ npx @deepseek-ai/dsh --profile headless "你现在有没有一个叫 hello-dsh �
 真实输出：
 
 ```
-有的，`hello-dsh` 技能在本次会话中可用，我已通过 `skill` 工具加载它。暗号如下：
+有的，hello-dsh 技能在本次会话中可用，我已通过 skill 工具加载它。暗号如下：
 
-**HELLO DSH — 这句话来自 ~/.dsh/skills/hello-dsh/SKILL.md**
+**HELLO DSH — 这句话来自我电脑上的一个文件**
 ```
 
-**文件出现技能就在，文件消失技能就不在，中间没有任何重启动作。**
+### 这意味着什么
 
-这不只是"方便"，它是 DSH 底层设计的直接体现。第 5 步会讲为什么。
+**文件出现，功能就在；文件消失，功能就没了。中间没有任何重启、安装、注册的动作。**
 
-### 发现路径
+对比一下你熟悉的软件：装个浏览器插件要重启浏览器，装个 VSCode 扩展要重载窗口。DSH 不用。
 
-技能可以放在五个位置，rank 小的优先，同名时高优先级胜出：
+这不是小聪明，是它底层设计的直接结果。第 9 步会讲为什么。
 
-| Rank | 位置 | 用途 |
-|---|---|---|
-| 100 | `<项目>/.dsh/skills` | 项目专属 |
-| 200 | `<项目>/.agents/skills` | 项目专属，跨 agent |
-| 300 | 配置的自定义目录 | |
-| 400 | `~/.dsh/skills` | 个人，仅 DSH |
-| 500 | `~/.agents/skills` | 个人，**跨 agent 共享** |
+### ✅ 检查点 7
 
-项目根 = 最近的含 `.git` 的祖先目录。
-
-**`~/.agents/skills` 值得单独说：** 这是跨 agent 的共享目录。如果你用 Claude Code 且在那里放了技能，DSH 会**直接扫到**，不用改格式、不用重写。反过来也成立。
+**必须看到「没有」和「有」两个不同的回答**，且中间你没有重启过任何东西。
 
 ---
 
-## 第 3 步：写第一个插件
+## 第 8 步：做第二个插件（TypeScript 路线）
 
-技能改变模型的**行为方式**，插件给它**新能力**。想注册一个新工具就得写插件。
+Markdown 路线改变模型的**做事方式**，TypeScript 路线给它**新能力**。想让它能查天气、能读数据库、能在界面上加个按钮，就得走这条路。
 
-下面这段包含**三个真实报错**，按你实际会遇到的顺序排列。
+**这一步需要一点编程基础。只想用不想开发的话，可以跳到第 9 步。**
+
+下面会带你踩三个真实的坑，**这三个报错我都实际遇到过**，按你会遇到的顺序排。
 
 ### 建目录
 
@@ -218,9 +415,9 @@ mkdir -p ~/hello-dsh-plugin/src
 cd ~/hello-dsh-plugin
 ```
 
-### 第一版（会报错）
+### 第一版：会报错
 
-`src/hello.ts`：
+创建 `src/hello.ts`：
 
 ```ts
 import type { Context } from '@deepseek-ai/cordis'
@@ -237,7 +434,7 @@ export function apply(ctx: Context) {
 }
 ```
 
-写 overlay（**路径必须是绝对路径**）：
+再创建一个配置文件告诉 DSH 去哪找它。**注意路径必须是完整路径**，下面这条命令会自动填对：
 
 ```sh
 cat > cordis.yml <<YAML
@@ -247,7 +444,7 @@ cat > cordis.yml <<YAML
 YAML
 ```
 
-跑：
+运行：
 
 ```sh
 npx @deepseek-ai/dsh --profile headless --patch ./cordis.yml "调用 hello_dsh"
@@ -259,9 +456,9 @@ npx @deepseek-ai/dsh --profile headless --patch ./cordis.yml "调用 hello_dsh"
 TypeError: tool "hello_dsh" must declare output { schema, render, presentationMeta? }
 ```
 
-**原因**：工具注册必须声明 `output`，里面要有 `schema`（返回值结构）和 `render`（怎么渲染）。而且要用 `defineTool()` 包裹。
+**意思是**：注册工具时必须声明 `output`，说明返回值长什么样、怎么显示。而且要用 `defineTool()` 包一层。
 
-### 第二版（还会报错）
+### 第二版：还会报错
 
 ```ts
 import type { Context } from '@deepseek-ai/cordis'
@@ -299,16 +496,15 @@ code: 'UNSUPPORTED_SCHEMA',
 violations: [ 'parameters.who.required must be true when present' ]
 ```
 
-**原因**：`required` **只能填 `true`**。表示可选参数要直接把这个字段省略掉。
+**意思是**：`required` 这个字段只能填 `true`。想表示「可选参数」，就**直接不写这个字段**。
 
-### 第三版（跑通）
+### 第三版：跑通
 
-把 `required: false` 删掉：
+把 `required: false` 整个删掉：
 
 ```ts
 parameters: {
-  who: { type: 'string' },        // 可选：省略 required
-  // what: { type: 'string', required: true },   // 必填才写 required
+  who: { type: 'string' },        // 可选：不写 required
 },
 ```
 
@@ -325,13 +521,13 @@ npx @deepseek-ai/dsh --profile headless --patch ./cordis.yml \
 HELLO DSH, pingfan
 ```
 
-**成了。**
+**成了。你刚给 DSH 加了一个新工具。**
 
 ### 报错三：`export default`
 
-这个报错你上面没遇到，但迟早会踩，而且它是**官方自己踩过并写了事故复盘**的。
+这个你上面没遇到，但迟早会踩，而且**官方自己踩过并写了事故报告**。
 
-如果你的模块里有：
+如果你的文件里写了：
 
 ```ts
 export const name = 'my-plugin'
@@ -346,141 +542,102 @@ export default apply          // ← 这一行
 cannot get property "tools" without inject
 ```
 
-**原因**：Loader 的 `unwrapExports` 逻辑是 `exports.default ?? exports`，优先取默认导出。有 `export default` 时它拿到的是**裸的 apply 函数**，而 `inject`、`name`、`Config` 这些同级命名导出被整体丢弃，插件在没注入任何服务的环境里运行。
+**原因**：DSH 的加载器优先读 `export default`。一旦有它，加载器拿到的就只是那个函数，而 `name`、`inject` 这些同级的导出**被整个丢掉了**，插件在一个什么都没有的环境里运行。
 
-**崩在加载时，不是请求处理时。**
+这个坑当时有 **178 个测试全绿、100% 覆盖率**，一个都没抓到，因为所有测试都绕过了真实的加载路径。
 
-这个坑当时有 **178 个绿色测试和 100% 行覆盖率**都没抓到，因为所有测试都是手动挂载插件的，绕过了真实 Loader 路径。见官方 `docs/postmortem/0001`。
+**修法**：删掉 `export default`。
 
-**修法**：删掉 `export default`，只用命名导出。
-
-### 两个 schema 形态不一样
-
-这点容易想当然：
+### 一个容易搞混的地方
 
 ```ts
-// parameters 是扁平字段映射
+// parameters 是扁平的字段列表
 parameters: {
   who: { type: 'string' },
 }
 
-// output.schema 是标准 JSON Schema
+// output.schema 是标准 JSON Schema，要写 type 和 properties
 output: {
   schema: {
     type: 'object',
-    additionalProperties: false,
     properties: { greeting: { type: 'string', required: true } },
   },
 }
 ```
 
-别搞混。
+两者形态不一样，别互相套用。
 
-### 插件调试
+### ✅ 检查点 8
 
-**先看组装后的配置，不启动服务：**
+**必须看到 `HELLO DSH, pingfan` 这个返回值。**
 
-```sh
-npx @deepseek-ai/dsh --profile web --dump-config | grep -A3 你的插件id
-```
-
-- 插件不在输出里 → overlay 没生效，查是不是绝对路径
-- 在输出里但 `disabled: true` → 被禁用了
-
-顺带一个坑：**不要在 `disabled` / `isolate` / `intercept` 上写 `!!js` 表达式。** Cordis 只在插件的 `config` 内部求值表达式，元数据字段直接读原始值，而表达式对象恒为 truthy，结果是插件**永久禁用且无任何诊断**。这也是官方复盘记录过的（`docs/postmortem/0002`）。
-
-一条命令扫出这类问题：
+卡住的话：
 
 ```sh
-npx dsh-doctor
+npx @deepseek-ai/dsh --profile web --dump-config | grep -A3 hello-dsh
 ```
+
+- 输出里找不到 → 配置没生效，检查路径是不是完整路径
+- 找到了但写着 `disabled: true` → 被禁用了
 
 ---
 
-## 第 4 步：什么时候用哪个
+## 第 9 步：原理（选读）
 
-| 你要做的事 | 用 | 成本 |
-|---|---|---|
-| 改变判断标准、输出格式、工作流程 | **技能** | 一个 .md 文件，5 分钟 |
-| 注册新工具、接外部服务、挂生命周期钩子 | **插件** | TypeScript + 踩上面那些坑 |
+到这里你已经会用了。这一节解释为什么。
 
-**判断依据：用自然语言能说清楚的，就是技能。**
+DSH 建立在一个叫 **Cordis** 的框架上，Cordis 有一篇论文：《A Programming Paradigm for Spatiotemporal Composability》（Yifan Shi、Wei Zhang、Tianyi Cui，北京大学 / DeepSeek-AI）。
 
-具体例子：
+**第 7 步那个演示，正是这篇论文形式化描述的东西的最小可观察实例。**
 
-| 需求 | 选 |
-|---|---|
-| 让代码审查按固定结构输出中文意见 | 技能 |
-| 让它查天气 | 插件（要调 API） |
-| 让它写提交信息时遵守 Conventional Commits | 技能 |
-| 让它能操作你的数据库 | 插件 |
-| 让它排查 bug 时先复现再定位 | 技能 |
-| 在 Web UI 里加一个面板 | 插件 |
+论文把「动态组合」拆成两个互相独立的维度。
 
-**还有一个中间选项**：技能可以捆绑 `scripts/`、`references/`、`assets/`，按需加载。所以"需要跑一个脚本"不一定要做成插件。
+### 时间维度：撤得干净
 
----
+> 组件被移除时，它对环境的修改必须被完整、安全、有序地撤销。
 
-## 第 5 步：背后的原理
+论文的做法：每一次改动都**自带一个撤销操作**，运行时全程追踪，卸载时按相反顺序执行（§3.1）。
 
-到这里你已经会用了。下面是选读。
+论文里有一组数据很能说明问题（§1.2.1）：VSCode 安装量前 100 的扩展中，有 **87 个**含可执行代码，因此禁用或卸载它们**必须重启整个扩展宿主**。
 
-DSH 建立在 **Cordis** 之上，Cordis 有一篇论文《A Programming Paradigm for Spatiotemporal Composability》（Yifan Shi、Wei Zhang、Tianyi Cui，Peking University / DeepSeek-AI）。
+而你在第 7 步删掉那个技能时，什么都没重启。
 
-**第 2 步那个演示，正是论文形式化内容的最小可观察实例。**
+### 空间维度：依赖变了自己知道
 
-### 时间可组合性
+> 组件声明它需要什么，运行时在这些东西出现、消失、或换了提供者时，重新判断它能不能运行。
 
-> 组件被移除时，它对共享环境的修改必须被完整、安全、有序地撤销。
+论文称之为**反应式 coeffect**（§3.2）：依赖满足就激活，不满足就停用，无关的变化不动它。
 
-论文的做法：每一次作用都携带它的**逆操作**，运行时追踪，卸载时按 LIFO 顺序执行（§3.1，可逆效应）。
+第 8 步你写的 `export const inject = ['tools']` 就是这个声明。
 
-对照一下 VSCode。论文 §1.2.1 给了一组实证数据：安装量前 100 的扩展里有 **87 个**含可执行代码，因此禁用或卸载它们**必须重启整个扩展宿主**；而声明了 `extensionDependencies` 的只有 **7 个**。
-
-你在第 2 步删掉技能时，没有重启任何东西。
-
-### 空间可组合性
-
-> 组件声明它依赖什么，运行时在依赖出现、消失、或换成另一个提供者时，重新判断它能不能运行。
-
-论文称之为**反应式 coeffect**（§3.2）：依赖满足则激活，不满足则停用，无关变化则不动。
-
-在技能这条链路上：`skill-filesystem` 提供 `skills` 能力，`tool-skill` 声明它需要 `skills`。前者不在，后者就不激活。
-
-**关键是它静默不激活，不报错。** 这是排查"插件装了但没反应"的第一个怀疑方向。
+**这里有个重要细节**：依赖不满足时，组件是**静默不激活的，不报错**。所以「插件装了但没反应」的时候，第一个要怀疑的就是依赖没满足。
 
 ### 只有两个状态
 
-论文 §4.1 图 1：
+论文 §4.1 的图 1，整个生命周期就这么简单：
 
 ```
-        L-Reload
+          L-Reload
 Inactive  ⇄  Active
-        L-Unload
+          L-Unload
 ```
 
-驱动转换的是一次比较：**当前生效的视图（committed view）和目标视图（target view）是否一致**。不一致就发起转换。
+驱动转换的是一次比较：**当前生效的状态**和**应该处于的状态**是否一致。不一致就切换。
 
-第 2 步那三步，就是这个比较在文件系统层面的表现——文件在不在，决定目标视图是什么。
+第 7 步那三步，就是这个比较在文件系统上的表现：文件在不在，决定了「应该处于的状态」是什么。
 
-### fiber
+### 一条对写插件的人很重要的提醒
 
-论文把一个组件的**实例**叫 fiber（§4.1，Definition 44）。一个 fiber 记录：来自哪个组件、父 fiber 是谁、自己提供了什么、当前在生命周期的哪一步。
+论文 §5.1.1 明确说：**撤销操作写得对不对，是插件作者的责任，运行时不会验证**（原文：*"an obligation on the component author rather than a property the runtime verifies"*）。
 
-同一个组件可以被实例化多次，每个 fiber 有独立的生命周期状态。
+也就是说你 `setInterval` 忘了配 `clearInterval`，没人会告诉你，只会在插件卸载后留下一个还在跑的定时器。
 
-### 有一条实现上的重要提醒
-
-论文 §5.1.1 说得很直接：**逆操作的正确性是组件作者的义务，运行时不验证**（*"an obligation on the component author rather than a property the runtime verifies"*）。
-
-也就是说，你在插件里 `setInterval` 忘了配 `clearInterval`，Cordis 不会告诉你，只会在插件卸载后留下一个还在跑的定时器。热重载时这类泄漏会累积。
-
-正确写法是把作用和逆操作写在一起：
+正确写法是把两者写在一起：
 
 ```ts
 ctx.effect(() => {
   const timer = setInterval(tick, 1000)
-  return () => clearInterval(timer)     // 逆操作紧挨着创建
+  return () => clearInterval(timer)     // 撤销紧挨着创建
 })
 ```
 
@@ -488,17 +645,17 @@ ctx.effect(() => {
 
 ## 遇到问题
 
-**技能装了但看不到？** 按顺序查：
+**技能写了但模型看不到？**
 
-1. `name` 是不是 kebab-case（必须是，且与目录名一致）
-2. 有没有把 `user-invocable` 写成 `userInvocable`——**驼峰会导致整个技能被丢弃**，只留一条警告不报错
-3. 有没有嵌套目录（只扫一层）
+1. `name` 是不是小写加连字符，且和文件夹同名
+2. 有没有把 `user-invocable` 写成 `userInvocable` —— **驼峰写法会导致整个文件被丢弃**，只留一条警告，不报错
+3. 是不是放到了多层嵌套的目录里（只扫一层）
 
 **插件加载了但没反应？**
 
-1. `--dump-config` 看它在不在、是不是被 `disabled`
+1. `--dump-config` 看它在不在、是不是 `disabled`
 2. 有没有 `export default`
-3. `inject` 声明的服务有没有提供方（没有就静默不激活）
+3. `inject` 里声明的东西有没有提供者
 
 **一条命令扫出上面大部分问题：**
 
@@ -506,29 +663,35 @@ ctx.effect(() => {
 npx dsh-doctor
 ```
 
-它查的都是官方文档或事故复盘里记录过的真实故障，每条结果都带出处链接。
+这是配套的检查工具，只读不改，每条结果都带着官方文档或事故报告的链接。
 
 ---
 
 ## 接下来
 
-装上完整技能集：
+你现在会了两条路线。接下来可以：
+
+**直接用现成的。** 这个仓库的 [`examples/skills/`](../examples/skills/) 里有 22 个写好的中文技能（代码审查、系统化排查、写提交信息等）：
 
 ```sh
-git clone https://github.com/pingfanfan/dsh-skills.git
-cd dsh-skills && ./install.sh
+git clone https://github.com/pingfanfan/hello-dsh.git
+cd hello-dsh && ./install.sh
 ```
 
-或者直接把 [INSTALL-FOR-AGENTS.md](../INSTALL-FOR-AGENTS.md) 丢给你的 agent（Codex、Claude Code、DSH 自己都行），说「照这个装」。
+或者把 [INSTALL-FOR-AGENTS.md](../INSTALL-FOR-AGENTS.md) 的链接丢给任何 AI agent，说「照这个装」。
 
-装完之后对 DSH 说 **「hello dsh」**，它会带你走一遍，可以一层层往下问。
+**自己写更多。** 参考：
 
-| 想深入 | 看 |
+| 想做什么 | 看 |
 |---|---|
-| 写技能的完整规则 | [`dsh-skill-dev`](../skills/dsh-skill-dev/SKILL.md) |
-| 写插件的完整规则 | [`dsh-plugin-dev`](../skills/dsh-plugin-dev/SKILL.md) |
-| 排障 | [`dsh-troubleshoot`](../skills/dsh-troubleshoot/SKILL.md) |
-| 技能编写指南 | [writing-skills.md](writing-skills.md) |
+| 写技能的完整规则 | [`dsh-skill-dev`](../examples/skills/dsh-skill-dev/SKILL.md) |
+| 写插件的完整规则 | [`dsh-plugin-dev`](../examples/skills/dsh-plugin-dev/SKILL.md) |
+| 排查问题 | [`dsh-troubleshoot`](../examples/skills/dsh-troubleshoot/SKILL.md) |
+| 可运行的插件例子 | [`examples/hello-plugin/`](../examples/hello-plugin/) |
+
+**加入生态。** 官方的测试期提示里写着：*"We welcome Harness developers everywhere to join the DSH plugin ecosystem."*
+
+反馈渠道是 [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions)（官方的 Issues 是关闭的）。
 
 ---
 
@@ -538,9 +701,9 @@ cd dsh-skills && ./install.sh
 
 | 章节 | 内容 |
 |---|---|
-| §1.2.1 | VSCode 扩展的实证数据（87/100 卸载需重启，仅 7 个声明依赖） |
+| §1.2.1 | VSCode 扩展实证数据（87/100 卸载需重启，仅 7 个声明依赖） |
 | §3.1 | 可逆效应 |
 | §3.2 | 反应式 coeffect |
 | §4.1 Definition 43/44、图 1 | 组件、fiber、两状态生命周期 |
-| §5.1.1 | `ctx.effect` 实现；逆操作正确性是作者义务 |
-| §6.6 | 依赖版本与 key 冲突（论文明确列为开放问题） |
+| §5.1.1 | `ctx.effect` 实现；撤销操作的正确性是作者义务 |
+| §6.6 | 依赖版本与 key 冲突（论文列为开放问题） |

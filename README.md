@@ -1,142 +1,145 @@
-# dsh-skills
+# Hello DSH
 
 English | [中文](README.zh.md)
 
-Chinese-language skills for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
+**Start from zero and see what "Everything is a Plugin" actually means in DeepSeek Harness.**
 
-Skills are plain Markdown — no code, no build step, no package to publish. Drop a directory in and DSH picks it up. Edits apply without a restart.
+DSH introduces itself as *"Everything is a Plugin."* That is not marketing — it ships **133 plugins**, including the model adapter, the tool registry, the web server, and **the agent loop itself**.
 
-## What you need
+![Plugin list](assets/05-plugin-list-133.png)
 
-| Prerequisite | Required? | Notes |
+This repo walks you from "open a terminal" to building your own plugins.
+
+---
+
+## Start here
+
+**→ [Full tutorial: Hello DSH](docs/hello-dsh.md)** (written in Chinese)
+
+It assumes you have nothing: no Node.js, no command-line experience. Every section ends with a checkpoint — **you don't move on until you see the expected result**.
+
+| Steps | What | Time |
 |---|---|---|
-| **Node.js** | Yes | Install the LTS build from [nodejs.org](https://nodejs.org) |
-| **DSH** | **No pre-install** | `npx` fetches it on demand; `~/.dsh/` is created on first run |
-| **DeepSeek API key** | To actually use it | Get one at [platform.deepseek.com](https://platform.deepseek.com), then `export DEEPSEEK_API_KEY=sk-…` |
+| 1–2 | Open a terminal, install Node.js | 7 min |
+| 3–4 | Launch DSH, configure the API key (all in the browser) | 8 min |
+| 5 | **See all 133 plugins for yourself** | 3 min |
+| 6–7 | Build your first plugin (Markdown route), watch its lifecycle | 10 min |
+| 8 | Build a second plugin (TypeScript route, with three real errors) | 15 min |
+| 9 | Theory: what the Cordis paper says (optional) | 10 min |
 
-Skills can be installed *before* DSH ever runs. No need to initialize anything first.
+Steps 1–7 take about 30 minutes and leave you with a working setup.
 
-## Install
+---
 
-### Easiest: let your agent do it
+## Two routes to extend DSH
+
+| Route | What you write | Effort | Good for |
+|---|---|---|---|
+| **Markdown** (skill) | One text file | 5 minutes | Changing how the model judges, formats, and works |
+| **TypeScript** (code plugin) | A code module | 30+ minutes | New tools, external services, UI changes |
+
+**Rule of thumb: if you can explain it in plain language, take the Markdown route.**
+
+The tutorial walks through both.
+
+---
+
+## Ready-made examples
+
+Once you're through the tutorial, [`examples/skills/`](examples/skills/) has 22 Chinese-language skills ready to use.
+
+### Let an AI install them (easiest)
 
 Hand this link to Codex, Claude Code, or DSH itself:
 
 ```
-https://github.com/pingfanfan/dsh-skills/blob/main/INSTALL-FOR-AGENTS.md
+https://github.com/pingfanfan/hello-dsh/blob/main/INSTALL-FOR-AGENTS.md
 install this
 ```
 
-It checks Node, DSH, and the API key first, then copies files. Skills are plain Markdown: no build, no npm install.
+It checks Node, DSH, and the API key first, then copies files.
 
 ### Or run one command
 
 ```sh
-git clone https://github.com/pingfanfan/dsh-skills.git
-cd dsh-skills && ./install.sh
+git clone https://github.com/pingfanfan/hello-dsh.git
+cd hello-dsh && ./install.sh
 ```
-
-Installs to `~/.dsh/skills/`. DSH discovers them automatically — **no restart**.
 
 Preview first: `./install.sh --dry-run`
-Cross-agent directory: `./install.sh --agents-dir`
 Remove: `./install.sh --uninstall`
 
-You can also just copy any directory under `skills/` into `~/.dsh/skills/`.
-
-## First lesson: Hello DSH
-
-Once installed, just say this to DSH:
-
-```
-hello dsh
-```
-
-It prints a passphrase that could only have come from a local file, then walks you through it one layer at a time: what a skill is, how the lifecycle works, when to write a plugin instead, and the Cordis theory behind it.
-
-**Full walkthrough**: [docs/hello-dsh.md](docs/hello-dsh.md) — 20 minutes from zero to a working skill *and* a working plugin, with real transcripts including the three errors you will hit writing a plugin and their exact fixes.
-
-## The skills
+### The skills
 
 | Skill | Use it when |
 |---|---|
-| `hello-dsh` | **Start here**: verify the skill system, lifecycle, skill vs plugin, Cordis theory |
-| `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions, discovery |
-| `dsh-skill-dev` | Writing a skill, or a skill is not being discovered |
-| `dsh-first-plugin` | Building and installing your first plugin (tested walkthrough) |
-| `dsh-plugin-dev` | Writing a plugin, or a plugin fails to load or inject |
-| `dsh-troubleshoot` | DSH won't start, config not taking effect, UNKNOWN_TOOL, missing skills |
-| `plan-before-code` | A task spanning several files, with unknowns, or over half a day |
+| `hello-dsh` | **Start here**: verify the plugin system, lifecycle, theory |
+| `dsh-onboarding` | First run of DSH, or stuck on startup, workspace, permissions |
+| `dsh-skill-dev` | Full rules for writing skills (Markdown route) |
+| `dsh-first-plugin` | Building your first code plugin (tested walkthrough) |
+| `dsh-plugin-dev` | Full rules for writing plugins (TypeScript route) |
+| `dsh-troubleshoot` | Won't start, config not applying, UNKNOWN_TOOL, missing skills |
+| `plan-before-code` | A task spanning several files, with unknowns |
 | `code-review-cn` | Reviewing a change, PR, or diff |
 | `debug-systematically` | A bug, a failing test, "it worked yesterday" |
 | `explain-codebase` | Getting oriented in an unfamiliar project |
 | `refactor-safely` | Refactoring, splitting functions, removing duplication |
 | `test-first` | Writing tests, implementing a feature, fixing a bug |
 | `api-design` | Designing an interface, adding a public method |
-| `error-handling` | Designing error handling, deciding throw vs return |
+| `error-handling` | Designing error handling, throw vs return |
 | `perf-optimize` | Optimizing performance, finding what's slow |
 | `security-review-cn` | Security review, attack surface, credential handling |
 | `commit-message` | Writing commit messages, splitting changes |
 | `pr-description` | Writing a PR description, preparing review |
 | `write-tech-cn` | Writing Chinese docs, READMEs, technical posts |
-| `write-docs-cn` | Writing or organizing project docs, API references, tutorials |
+| `write-docs-cn` | Writing or organizing project docs, API references |
 | `web-research` | Researching online, verifying facts, evaluating options |
-| `ask-good-questions` | Asking a technical question, reporting a bug, filing an issue |
+| `ask-good-questions` | Asking a technical question, reporting a bug |
 
-More are being added.
+Once installed, say **"hello dsh"** to DSH and it walks you through, one layer at a time.
 
-## How these are written
-
-**Following the official pattern.** The DSH repo ships [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills) — 11 skills DeepSeek wrote for their own use. These follow that model: name the sources of truth, give judgment criteria rather than checklists, prefer few and accurate over many and thin.
-
-**Chinese first.** The bundled official skills are in English.
-
-**Instructions, not documentation.** A skill tells the model what to do first, what not to do, and how to know it worked. It is not a background essay.
-
-## About the installer
-
-`install.sh` is the only code here, and it is deliberately conservative:
-
-- Writes only to `~/.dsh/skills` or `~/.agents/skills` — nowhere else
-- Prints the exact target paths and asks before writing
-- Uninstall removes **only the skills listed in this repo, matched by name** — no globs, so your own skills are never touched
-- Never modifies shell profiles, git config, or any global setting
-- If the script breaks, the skills still work — copy the directories by hand
-
-## Writing your own
-
-```
-~/.dsh/skills/<name>/SKILL.md
-```
-
-```markdown
----
-name: my-skill          # required, kebab-case
-description: ...        # required — this is how the model decides to load it
 ---
 
-(body is the instruction the model receives)
+## One gotcha
+
+⚠️ **The DSH web UI ships with skills disabled** (the CLI profile has them on). Verified on `0.1.0-rc.6`.
+
+To use skills in the web UI:
+
+```sh
+npx @deepseek-ai/dsh web --patch ./enable-skills-in-web.yml
 ```
 
-Discovery order (lower rank wins):
+That file is in this repo's root.
 
-| Rank | Location |
-|---|---|
-| 100 | `<project>/.dsh/skills` |
-| 200 | `<project>/.agents/skills` |
-| 400 | `~/.dsh/skills` |
-| 500 | `~/.agents/skills` |
+---
 
-Two traps:
+## Companion tool
 
-- **Frontmatter keys must be kebab-case.** Write `userInvocable` instead of `user-invocable` and the entire skill is **silently dropped** with only a warning. Check this first when a skill "disappears".
-- **`description` matters more than the body.** The model reads it to decide whether to load the skill at all. Say when to use it.
+[`dsh-doctor`](https://github.com/pingfanfan/dsh-doctor) — config health checks that catch silent failures:
+
+```sh
+npx dsh-doctor
+```
+
+Read-only. Every rule maps to a real failure documented in DeepSeek's own docs or postmortems.
+
+---
+
+## How these skills are written
+
+Following DSH's own [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills) — 11 skills DeepSeek wrote for internal use. What they have in common:
+
+1. **Guidance, not a checklist** (their words: *"This skill is guidance, not a complete checklist"*)
+2. **Name the sources of truth**, and say "read them, don't restate them"
+3. **Layer it**: blocking requirements / manual checks / what not to do
+4. **A dedicated "what not to do" section** — it prevents more than the positive instructions do
 
 See [docs/writing-skills.md](docs/writing-skills.md).
 
 ## Contributing
 
-Open a PR. Two requirements: Chinese, and you actually use it.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Two requirements: Chinese, and you actually use it.
 
 ## License
 

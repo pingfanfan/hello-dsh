@@ -1,5 +1,5 @@
 #!/bin/sh
-# dsh-skills installer
+# hello-dsh installer
 #
 # 安全约束（有意为之，请勿放宽）：
 #   - 只写入 ~/.dsh/skills 或 ~/.agents/skills，不碰任何其他路径
@@ -10,7 +10,7 @@
 
 set -eu
 
-REPO_URL="https://github.com/pingfanfan/dsh-skills.git"
+REPO_URL="https://github.com/pingfanfan/hello-dsh.git"
 TARGET_DEFAULT="$HOME/.dsh/skills"
 DRY_RUN=0
 UNINSTALL=0
@@ -54,14 +54,14 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-if [ -d "$SCRIPT_DIR/skills" ]; then
-  SRC="$SCRIPT_DIR/skills"
+if [ -d "$SCRIPT_DIR/examples/skills" ]; then
+  SRC="$SCRIPT_DIR/examples/skills"
 else
   command -v git >/dev/null 2>&1 || { echo "需要 git，未找到。" >&2; exit 1; }
   CLONE_TMP=$(mktemp -d)
-  echo "正在获取 dsh-skills ..."
+  echo "正在获取 hello-dsh ..."
   git clone --depth 1 --quiet "$REPO_URL" "$CLONE_TMP/repo"
-  SRC="$CLONE_TMP/repo/skills"
+  SRC="$CLONE_TMP/repo/examples/skills"
 fi
 
 [ -d "$SRC" ] || { echo "找不到技能目录: $SRC" >&2; exit 1; }
@@ -101,7 +101,7 @@ if [ "$UNINSTALL" -eq 1 ]; then
   exit 0
 fi
 
-echo "dsh-skills — 将安装 $COUNT 个技能"
+echo "hello-dsh — 将安装 $COUNT 个技能"
 echo
 echo "  来源: $SRC"
 echo "  目标: $TARGET"

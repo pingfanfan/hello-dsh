@@ -1,71 +1,84 @@
-# dsh-skills
+# Hello DSH
 
 [English](README.md) | 中文
 
-给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）用的中文技能集。
+**从零开始，看懂 DeepSeek Harness 的「万物皆可插件」。**
 
-技能是纯 Markdown——不用写代码，不用构建，不用发包。放进目录就自动生效，改完不用重启。
+DSH 的第一句自我介绍是 *"Everything is a Plugin"*。这不是修辞——它有 **133 个插件**，其中包括模型适配器、工具注册表、Web 服务器，甚至 **agent 的主循环本身**。
 
-## 你需要什么
+![插件列表](assets/05-plugin-list-133.png)
 
-| 前置 | 必需吗 | 说明 |
+这个仓库带你从「打开终端」开始，一步步做出你自己的插件。
+
+---
+
+## 开始
+
+**→ [完整教程：Hello DSH](docs/hello-dsh.md)**
+
+假设你什么都没有：没装过 Node，没用过命令行。每一节都有检查点，**看到指定结果才往下走**。
+
+| 步骤 | 内容 | 时间 |
 |---|---|---|
-| **Node.js** | 是 | 从 [nodejs.org](https://nodejs.org) 装 LTS 版 |
-| **DSH** | **不用预装** | `npx` 会自动拉，`~/.dsh/` 首次运行时自动生成 |
-| **DeepSeek API Key** | 用的时候要 | [platform.deepseek.com](https://platform.deepseek.com) 领，然后 `export DEEPSEEK_API_KEY=sk-xxx` |
+| 1–2 | 打开终端、装 Node.js | 7 分钟 |
+| 3–4 | 启动 DSH、配置密钥（全程点网页） | 8 分钟 |
+| 5 | **亲眼看到 133 个插件** | 3 分钟 |
+| 6–7 | 做第一个插件（Markdown 路线）、看它的生命周期 | 10 分钟 |
+| 8 | 做第二个插件（TypeScript 路线，含三个真实报错） | 15 分钟 |
+| 9 | 原理：Cordis 论文说了什么（选读） | 10 分钟 |
 
-技能可以在 DSH 第一次运行**之前**就装好，不用等它初始化。
+前 7 步约 30 分钟，跑完就能用。
 
-## 安装
+---
 
-### 最省事：让你的 agent 装
+## 给 DSH 加东西的两条路
+
+| 路线 | 写什么 | 门槛 | 适合 |
+|---|---|---|---|
+| **Markdown**（技能） | 一个文本文件 | 5 分钟 | 改变模型的判断标准、输出格式、工作流程 |
+| **TypeScript**（代码插件） | 一个代码模块 | 半小时起 | 注册新工具、接外部服务、改界面 |
+
+**判断依据：能用大白话说清楚要它怎么做的，走 Markdown 路线。**
+
+教程两条都会带你走一遍。
+
+---
+
+## 现成的例子
+
+跑完教程想直接用的话，[`examples/skills/`](examples/skills/) 里有 22 个写好的中文技能。
+
+### 让 AI 帮你装（最省事）
 
 把这个链接丢给 Codex、Claude Code、或 DSH 自己：
 
 ```
-https://github.com/pingfanfan/dsh-skills/blob/main/INSTALL-FOR-AGENTS.md
+https://github.com/pingfanfan/hello-dsh/blob/main/INSTALL-FOR-AGENTS.md
 照这个装
 ```
 
-它会先帮你检查 Node、DSH、API Key 三项前置，再拷文件。技能是纯 Markdown，不用编译、不用 npm install。
+它会先检查 Node、DSH、API 密钥三项前置，再拷文件。
 
 ### 或者自己跑一条命令
 
 ```sh
-git clone https://github.com/pingfanfan/dsh-skills.git
-cd dsh-skills && ./install.sh
+git clone https://github.com/pingfanfan/hello-dsh.git
+cd hello-dsh && ./install.sh
 ```
-
-装到 `~/.dsh/skills/`，DSH 自动发现，**不用重启**。
 
 先看会做什么：`./install.sh --dry-run`
-装到跨 agent 共享目录：`./install.sh --agents-dir`
 移除：`./install.sh --uninstall`
 
-也可以直接把 `skills/` 下任意目录拷进 `~/.dsh/skills/`，脚本只是省事。
-
-## 第一课：Hello DSH
-
-装完之后，直接对 DSH 说：
-
-```
-hello dsh
-```
-
-它会输出一句只可能来自本地文件的暗号，然后按层往下讲：技能是什么、生命周期怎么走、什么时候该写插件、背后的 Cordis 理论是什么。
-
-**完整教程**：[docs/hello-dsh.md](docs/hello-dsh.md) — 20 分钟从零跑通技能和插件，每一步都有真实运行记录，包括写插件时会踩的三个报错和它们的确切修法。
-
-## 技能清单
+### 技能清单
 
 | 技能 | 什么时候用 |
 |---|---|
-| `hello-dsh` | **第一课**：验证技能系统，按层讲解生命周期、技能 vs 插件、Cordis 原理 |
-| `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限、技能发现 |
-| `dsh-skill-dev` | 给 DSH 写技能，或技能没被发现 |
-| `dsh-first-plugin` | 从零做出并装上第一个插件（实测流程 + 三个报错） |
-| `dsh-plugin-dev` | 给 DSH 写插件，或插件没加载没注入 |
-| `dsh-troubleshoot` | DSH 起不来、配置没生效、UNKNOWN_TOOL、技能不见了 |
+| `hello-dsh` | **第一课**：验证插件系统，按层讲解生命周期与原理 |
+| `dsh-onboarding` | 第一次跑 DSH，或卡在启动、工作区、权限 |
+| `dsh-skill-dev` | 写技能（Markdown 路线）的完整规则 |
+| `dsh-first-plugin` | 从零做出第一个代码插件（实测流程 + 三个报错） |
+| `dsh-plugin-dev` | 写插件（TypeScript 路线）的完整规则 |
+| `dsh-troubleshoot` | 起不来、配置没生效、UNKNOWN_TOOL、技能不见了 |
 | `plan-before-code` | 任务要改多处、有不确定性、超过半天 |
 | `code-review-cn` | 审查代码改动、PR、diff |
 | `debug-systematically` | 遇到 bug、测试失败、本来是好的现在坏了 |
@@ -83,60 +96,52 @@ hello dsh
 | `web-research` | 联网查资料、核实事实、技术选型 |
 | `ask-good-questions` | 提技术问题、报 bug、写 issue |
 
-技能持续增加中。
+装完之后对 DSH 说 **「hello dsh」**，它会带你走一遍，可以一层层往下问。
 
-## 设计原则
-
-**按官方范式写。** DSH 仓库里有 [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills)，DeepSeek 官方自己在用的 11 个技能。本仓库的写法参照它们：明确事实来源、给判断依据而非清单、宁可少而准。
-
-**中文优先。** 官方内置技能是英文的。
-
-**说人话。** 技能是给模型的指令，不是文档。写"先做什么、不要做什么、怎么判断做对了"，不写背景介绍。
-
-## 关于安装脚本
-
-`install.sh` 是这个仓库里唯一的代码，有意写得很保守：
-
-- 只写入 `~/.dsh/skills` 或 `~/.agents/skills`，不碰其他任何路径
-- 安装前打印将写入的确切路径并要求确认
-- 卸载按本仓库的技能清单**逐个比对删除**，不使用通配符——你自己的技能不会被误删
-- 不修改 shell 配置、git 配置或任何全局设置
-- 脚本坏了也不影响技能可用，手动拷贝目录即可
-
-## 自己写一个技能
-
-```
-~/.dsh/skills/<name>/SKILL.md
-```
-
-```markdown
----
-name: my-skill          # 必需，kebab-case
-description: ...        # 必需，决定模型什么时候会用它
 ---
 
-（正文是给模型的指令）
+## 一个要注意的坑
+
+⚠️ **DSH 的网页版默认关闭了技能功能**（命令行版是开着的）。实测于 `0.1.0-rc.6`。
+
+网页版要用技能的话：
+
+```sh
+npx @deepseek-ai/dsh web --patch ./enable-skills-in-web.yml
 ```
 
-发现路径按优先级（rank 小的优先）：
+配置文件在本仓库根目录。
 
-| Rank | 位置 |
-|---|---|
-| 100 | `<项目>/.dsh/skills` |
-| 200 | `<项目>/.agents/skills` |
-| 400 | `~/.dsh/skills` |
-| 500 | `~/.agents/skills` |
+---
 
-两个坑：
+## 配套工具
 
-- **frontmatter 的键必须是 kebab-case。** 写成 `userInvocable` 而不是 `user-invocable`，整个技能会被**静默丢弃**，只留一条警告。技能"不见了"先查这里。
-- **`description` 比正文更重要。** 模型靠它决定要不要加载这个技能。写清楚"什么时候用"。
+[`dsh-doctor`](https://github.com/pingfanfan/dsh-doctor) —— DSH 配置体检，一条命令扫出会导致静默失效的问题：
+
+```sh
+npx dsh-doctor
+```
+
+只读不改。每条检查都对应 DeepSeek 官方文档或事故报告里记录过的真实故障。
+
+---
+
+## 这些技能是怎么写的
+
+参照 DSH 官方仓库的 [`.agents/skills/`](https://github.com/deepseek-ai/deepseek-harness/tree/master/.agents/skills)，那里有 11 个 DeepSeek 自己在用的技能。共同点：
+
+1. **是判断指引，不是清单**（官方原话：*"This skill is guidance, not a complete checklist"*）
+2. **列出事实来源**，并说明「读它，不要复述它」
+3. **分层**：阻断项 / 检查项 / 不要做的事
+4. **单独写「不要做的事」** —— 挡住的问题往往比「要做什么」更多
 
 详见 [docs/writing-skills.md](docs/writing-skills.md)。
 
+---
+
 ## 欢迎投稿
 
-有好用的技能就提 PR。要求只有两条：中文、并且你真的在用它。
+见 [CONTRIBUTING.md](CONTRIBUTING.md)。要求两条：中文、并且你真的在用它。
 
 ## 许可
 

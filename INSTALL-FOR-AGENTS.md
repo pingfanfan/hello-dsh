@@ -6,7 +6,7 @@
 
 ## 任务
 
-让用户能用上 `pingfanfan/dsh-skills` 这套 DeepSeek Harness（DSH）中文技能。
+让用户能用上 `pingfanfan/hello-dsh` 这套 DeepSeek Harness（DSH）中文技能。
 
 **先检查前置条件，再安装。** 用户很可能什么都没装过。
 
@@ -80,21 +80,21 @@ dsh: MISSING_CREDENTIAL: llm-deepseek: no API key for provider route "deepseek-o
 优先用 git（保留后续更新能力）：
 
 ```sh
-git clone --depth 1 https://github.com/pingfanfan/dsh-skills.git /tmp/dsh-skills
+git clone --depth 1 https://github.com/pingfanfan/hello-dsh.git /tmp/hello-dsh
 ```
 
 没有 git 时用打包下载：
 
 ```sh
-curl -fsSL https://github.com/pingfanfan/dsh-skills/archive/refs/heads/main.tar.gz | tar xz -C /tmp
-# 解出 /tmp/dsh-skills-main
+curl -fsSL https://github.com/pingfanfan/hello-dsh/archive/refs/heads/main.tar.gz | tar xz -C /tmp
+# 解出 /tmp/hello-dsh-main
 ```
 
 ### 拷贝
 
 ```sh
 mkdir -p ~/.dsh/skills
-cp -R /tmp/dsh-skills/skills/* ~/.dsh/skills/
+cp -R /tmp/hello-dsh/examples/skills/* ~/.dsh/skills/
 ```
 
 `~/.dsh/skills/` 不存在时直接创建即可，**不用先跑 DSH**。
@@ -147,7 +147,7 @@ npx @deepseek-ai/dsh --profile headless "hello dsh"
 按名字逐个删除，**绝对不要用通配符**，否则会误删用户自己写的技能：
 
 ```sh
-for n in $(ls /tmp/dsh-skills/skills); do
+for n in $(ls /tmp/hello-dsh/examples/skills); do
   rm -rf ~/.dsh/skills/"$n"
 done
 ```
@@ -155,8 +155,8 @@ done
 ## 更新
 
 ```sh
-cd /tmp/dsh-skills && git pull
-cp -R skills/* ~/.dsh/skills/
+cd /tmp/hello-dsh && git pull
+cp -R examples/skills/* ~/.dsh/skills/
 ```
 
 技能是热加载的，**不需要重启 DSH**。
