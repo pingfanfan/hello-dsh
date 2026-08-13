@@ -16,6 +16,8 @@ DSH 的第一句自我介绍是 *"Everything is a Plugin"*。这不是修辞—�
 
 **→ [完整教程：Hello DSH](docs/hello-dsh.md)**
 
+> 🌏 教程目前只有中文版，英文版整理中。
+
 假设你什么都没有：没装过 Node，没用过命令行。每一节都有检查点，**看到指定结果才往下走**。
 
 | 步骤 | 内容 | 时间 |
@@ -116,7 +118,7 @@ npx @deepseek-ai/dsh web --patch ./enable-skills-in-web.yml
 
 ## 配套工具
 
-[`dsh-doctor`](https://github.com/pingfanfan/dsh-doctor) —— DSH 配置体检，一条命令扫出会导致静默失效的问题：
+`dsh-doctor` —— DSH 配置体检，一条命令扫出会导致静默失效的问题：
 
 ```sh
 npx dsh-doctor

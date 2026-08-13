@@ -14,7 +14,12 @@ This repo walks you from "open a terminal" to building your own plugins.
 
 ## Start here
 
-**→ [Full tutorial: Hello DSH](docs/hello-dsh.md)** (written in Chinese)
+**→ [Full tutorial: Hello DSH](docs/hello-dsh.md)**
+
+> 🌏 **The tutorial is currently written in Chinese.** An English version is in progress.
+> The code, commands, and screenshots are language-neutral, so the walkthrough is still
+> followable — and the skills in [`examples/skills/`](examples/skills/) work regardless of
+> what language you read.
 
 It assumes you have nothing: no Node.js, no command-line experience. Every section ends with a checkpoint — **you don't move on until you see the expected result**.
 
@@ -116,7 +121,7 @@ That file is in this repo's root.
 
 ## Companion tool
 
-[`dsh-doctor`](https://github.com/pingfanfan/dsh-doctor) — config health checks that catch silent failures:
+`dsh-doctor` — config health checks that catch silent failures:
 
 ```sh
 npx dsh-doctor

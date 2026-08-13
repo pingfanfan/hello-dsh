@@ -249,13 +249,30 @@ DSH 需要 DeepSeek 的 API 密钥才能调用模型。**这一步全程在网�
 
 ⚠️ **DSH 的网页版默认关闭了技能功能**（命令行版是开着的）。这是当前版本的实际情况。
 
-先按 `Ctrl + C` 停掉正在运行的 DSH，然后换成这样启动：
+先按 `Ctrl + C` 停掉正在运行的 DSH。
+
+然后新建一个配置文件（整段复制粘贴执行）：
 
 ```sh
-npx @deepseek-ai/dsh web --patch https://raw.githubusercontent.com/pingfanfan/hello-dsh/main/enable-skills-in-web.yml
+cat > ~/enable-skills.yml <<'EOF'
+- id: skill-filesystem
+  disabled: false
+- id: tool-skill
+  disabled: false
+- id: skill-badge
+  disabled: false
+EOF
 ```
 
-如果你更喜欢用命令行版（不用网页），可以跳过这条，直接用后面的 `--profile headless` 命令。
+用它重新启动 DSH：
+
+```sh
+npx @deepseek-ai/dsh web --patch ~/enable-skills.yml
+```
+
+> 这个文件本仓库根目录也有一份（`enable-skills-in-web.yml`），克隆下来的话可以直接用。
+
+**如果你更喜欢用命令行版**（不开网页），可以跳过这一整段 —— 命令行版默认就是开着的，直接用后面的 `--profile headless` 命令即可。
 
 ### 创建文件
 
