@@ -20,6 +20,9 @@ This repo walks you from "open a terminal" to building your own plugins.
 > The code, commands, and screenshots are language-neutral, so the walkthrough is still
 > followable — and the skills in [`examples/skills/`](examples/skills/) work regardless of
 > what language you read.
+>
+> ⚠️ **Launch the web UI with `--patch`**, or skills silently do nothing. See
+> [the gotcha below](#one-gotcha).
 
 It assumes you have nothing: no Node.js, no command-line experience. Every section ends with a checkpoint — **you don't move on until you see the expected result**.
 

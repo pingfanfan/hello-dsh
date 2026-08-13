@@ -104,11 +104,37 @@ v22.11.0
 
 ## 第 3 步：启动 DSH
 
-**DSH 不需要单独安装。** 下面这条命令会自动下载并运行它：
+**DSH 不需要单独安装。** 下面的命令会自动下载并运行它。
+
+### 先做一件事：打开技能功能
+
+⚠️ **DSH 的网页版出厂时把技能功能关掉了**（命令行版是开着的）。不打开的话，你在第 6 步做的东西**不会生效**，而且不报错，模型只会自己瞎编。
+
+这是当前版本（`0.1.0-rc.6`）的实际情况，一分钟就能解决。
+
+先创建一个小配置文件，**整段复制粘贴到终端，按回车**：
 
 ```sh
-npx @deepseek-ai/dsh web
+cat > ~/enable-skills.yml <<'EOF'
+- id: skill-filesystem
+  disabled: false
+- id: tool-skill
+  disabled: false
+- id: skill-badge
+  disabled: false
+EOF
 ```
+
+它不会有任何输出，这是正常的。
+
+### 启动
+
+```sh
+npx @deepseek-ai/dsh web --patch ~/enable-skills.yml
+```
+
+> **注意末尾那个 `--patch ~/enable-skills.yml`，不要漏掉。**
+> 漏了的话 DSH 照样能跑，但技能不生效 —— 这是最容易踩的坑。
 
 第一次运行要下载几十兆的文件，**可能要等一到几分钟，屏幕上没动静是正常的，不是卡死了**。
 
@@ -141,6 +167,15 @@ dsh web: http://127.0.0.1:3080
 1. 浏览器里能打开 http://127.0.0.1:3080
 2. 关掉提示弹窗后，看到中间写着 **"Into the Unknown"**
 3. 终端窗口还开着，没有报错
+4. **技能功能确实打开了** —— 验证方法见下
+
+**验证技能功能有没有打开**（这一条最关键）：
+
+点左下角 **Settings** → 左侧 **Plugins** → 上方 **Plugin list** 标签 → 搜索框输入 `skill`。
+
+应该看到 5 个插件，其中 **`skill-filesystem` 和 `tool-skill` 都标着 `Enabled`**。
+
+如果它们标着 `Disabled`，说明启动时漏了 `--patch`。按 `Ctrl + C` 停掉，用上面那条带 `--patch` 的命令重启。
 
 **如果浏览器打不开**，检查终端里有没有 `EADDRINUSE` 字样。有的话说明 3080 端口被占用了，先关掉占用它的程序。
 
@@ -245,35 +280,6 @@ DSH 需要 DeepSeek 的 API 密钥才能调用模型。**这一步全程在网�
 
 这一步走 Markdown 路线。它由第 5 步看到的 `skill-filesystem` 插件负责加载。
 
-### Web UI 需要先打开这个功能
-
-⚠️ **DSH 的网页版默认关闭了技能功能**（命令行版是开着的）。这是当前版本的实际情况。
-
-先按 `Ctrl + C` 停掉正在运行的 DSH。
-
-然后新建一个配置文件（整段复制粘贴执行）：
-
-```sh
-cat > ~/enable-skills.yml <<'EOF'
-- id: skill-filesystem
-  disabled: false
-- id: tool-skill
-  disabled: false
-- id: skill-badge
-  disabled: false
-EOF
-```
-
-用它重新启动 DSH：
-
-```sh
-npx @deepseek-ai/dsh web --patch ~/enable-skills.yml
-```
-
-> 这个文件本仓库根目录也有一份（`enable-skills-in-web.yml`），克隆下来的话可以直接用。
-
-**如果你更喜欢用命令行版**（不开网页），可以跳过这一整段 —— 命令行版默认就是开着的，直接用后面的 `--profile headless` 命令即可。
-
 ### 创建文件
 
 在终端里**新开一个窗口**（别关掉正在跑 DSH 的那个），执行：
@@ -361,7 +367,7 @@ description: 当需要审查代码改动、pull request 或 diff 时使用，
 
 1. 文件路径对不对：`ls ~/.dsh/skills/hello-dsh/` 应该列出 `SKILL.md`
 2. `name` 是不是写成了 `Hello_DSH` 这种（**必须是小写加连字符**）
-3. 用网页版的话，有没有加上面那个 `--patch` 参数
+3. 用网页版的话，启动时有没有带 `--patch ~/enable-skills.yml`（回到检查点 3 验证）
 
 ---
 
@@ -662,19 +668,44 @@ ctx.effect(() => {
 
 ## 遇到问题
 
-**技能写了但模型看不到？**
+### 网页版说 `hello dsh` 输出不对，命令行版却是对的
+
+**这是最常见的问题，原因是网页版没打开技能功能。**
+
+命令行版（`--profile headless`）默认开着，网页版默认关着。所以同一个技能，命令行能用、网页不能用。
+
+模型这时候看不到你的技能，只能凭自己编，所以输出看起来"像那么回事"但内容是错的，**而且不会报错**。
+
+**解决**：按 `Ctrl + C` 停掉网页版，然后：
+
+```sh
+cat > ~/enable-skills.yml <<'EOF'
+- id: skill-filesystem
+  disabled: false
+- id: tool-skill
+  disabled: false
+- id: skill-badge
+  disabled: false
+EOF
+
+npx @deepseek-ai/dsh web --patch ~/enable-skills.yml
+```
+
+**确认它真的开了**：Settings → Plugins → Plugin list → 搜 `skill`，看 `skill-filesystem` 和 `tool-skill` 是不是 `Enabled`。
+
+### 技能写了但模型看不到？
 
 1. `name` 是不是小写加连字符，且和文件夹同名
 2. 有没有把 `user-invocable` 写成 `userInvocable` —— **驼峰写法会导致整个文件被丢弃**，只留一条警告，不报错
 3. 是不是放到了多层嵌套的目录里（只扫一层）
 
-**插件加载了但没反应？**
+### 插件加载了但没反应？
 
 1. `--dump-config` 看它在不在、是不是 `disabled`
 2. 有没有 `export default`
 3. `inject` 里声明的东西有没有提供者
 
-**一条命令扫出上面大部分问题：**
+### 一条命令扫出上面大部分问题
 
 ```sh
 npx dsh-doctor
