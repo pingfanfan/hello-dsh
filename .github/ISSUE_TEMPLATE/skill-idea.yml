@@ -1,0 +1,24 @@
+name: 建议一个技能
+description: 你希望有个技能能做某件事
+title: "[技能] "
+labels: ["技能建议"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决什么问题
+      description: 说场景，不用说方案
+      placeholder: "例如：每次写 commit message 都要想半天格式"
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 现在你怎么绕过去的
+      placeholder: 绕不过就写绕不过
+  - type: checkboxes
+    id: willing
+    attributes:
+      label: ""
+      options:
+        - label: 我愿意自己写这个技能并提 PR

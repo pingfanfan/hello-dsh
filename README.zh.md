@@ -1,14 +1,31 @@
+<div align="center">
+
 # Hello DSH
 
-[English](README.md) | 中文
+**[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的入门第一课**
 
-**从零开始，看懂 DeepSeek Harness 的「万物皆可插件」。**
+从「怎么打开终端」开始，30 分钟做出你的第一个插件
 
-DSH 的第一句自我介绍是 *"Everything is a Plugin"*。这不是修辞——它有 **133 个插件**，其中包括模型适配器、工具注册表、Web 服务器，甚至 **agent 的主循环本身**。
+[![教程](https://img.shields.io/badge/教程-10%20步-blue)](docs/hello-dsh.md)
+[![技能](https://img.shields.io/badge/技能实例-22%20个-green)](examples/skills/)
+[![DSH](https://img.shields.io/badge/DSH-0.1.0--rc.6%20实测-orange)](https://github.com/deepseek-ai/deepseek-harness)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+
+[English](README.md) · **中文** · [**开始学 →**](docs/hello-dsh.md)
+
+</div>
+
+---
+
+DSH 的第一句自我介绍是 *"Everything is a Plugin"*。
+
+这不是修辞。装好之后点 Settings → Plugins → Plugin list，看右上角那个数字：
 
 ![插件列表](assets/05-plugin-list-133.png)
 
-这个仓库带你从「打开终端」开始，一步步做出你自己的插件。
+**133 个。** 里面有 `llm`（模型适配器）、`session`（会话记录）、`webserver`（你正在看的网页服务器）、`ui-sidebar`（左边那条侧边栏），还有 `agent-loop` —— **agent 的主循环本身也是一个插件**。
+
+这个仓库带你从「打开终端」开始，一步步做出你自己的插件，并亲眼看到它的生命周期。
 
 ---
 
@@ -117,6 +134,20 @@ npx @deepseek-ai/dsh web --patch ./enable-skills-in-web.yml
 配置文件在本仓库根目录。
 
 ---
+
+## 写这份教程时实测到的行为
+
+为了写这个，我在两台干净的 Mac 上从头跑了 DSH。下面这些行为都写进了教程，因为每一条都会让新手卡住而且不报错：
+
+| 发现 | 为什么重要 |
+|---|---|
+| 网页版出厂时 `tool-skill` 和 `skill-filesystem` 是**禁用的**，`headless` 是启用的 | 同一个技能命令行能用、网页版静默失效，没有任何报错 |
+| 网页版**必须先选工作区**，发送按钮才会激活 | 命令行版没这个限制，所以用 headless 验证时撞不上 |
+| 旧的 DSH 进程占着 3080 时，**页面照样能正常打开** | 新实例报 `EADDRINUSE` 退出，浏览器连的是旧进程，改什么配置都不生效 |
+| `--patch` 是**插入**而不是覆盖，被 patch 的插件会挂载两份 | 无害，但插件列表会显示 7 个 skill 插件而不是 5 个 |
+| frontmatter 键名写成驼峰会丢弃**整个技能**，只留一条警告 | 官方有意的 fail-closed 设计，但不知道的话很难查 |
+
+全部实测于 `0.1.0-rc.6`。
 
 ## 配套工具
 

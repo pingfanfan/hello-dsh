@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: DSH 本身的问题
+    url: https://github.com/deepseek-ai/deepseek-harness/discussions
+    about: DSH 的 bug 和功能建议请提给官方，这里只处理教程和技能相关的问题
+  - name: 提问 / 讨论
+    url: https://github.com/pingfanfan/hello-dsh/discussions
+    about: 不确定算不算问题的，先来这里聊

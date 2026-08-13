@@ -1,14 +1,31 @@
+<div align="center">
+
 # Hello DSH
 
-English | [中文](README.zh.md)
+**The first lesson for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)**
 
-**Start from zero and see what "Everything is a Plugin" actually means in DeepSeek Harness.**
+From "open a terminal" to your first plugin, in 30 minutes
 
-DSH introduces itself as *"Everything is a Plugin."* That is not marketing — it ships **133 plugins**, including the model adapter, the tool registry, the web server, and **the agent loop itself**.
+[![Tutorial](https://img.shields.io/badge/tutorial-10%20steps-blue)](docs/hello-dsh.md)
+[![Skills](https://img.shields.io/badge/example%20skills-22-green)](examples/skills/)
+[![DSH](https://img.shields.io/badge/DSH-0.1.0--rc.6%20verified-orange)](https://github.com/deepseek-ai/deepseek-harness)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+
+**English** · [中文](README.zh.md) · [**Start →**](docs/hello-dsh.md)
+
+</div>
+
+---
+
+DSH introduces itself as *"Everything is a Plugin."*
+
+That is not marketing. Open Settings → Plugins → Plugin list and look at the count:
 
 ![Plugin list](assets/05-plugin-list-133.png)
 
-This repo walks you from "open a terminal" to building your own plugins.
+**133 of them.** `llm` (the model adapter), `session` (conversation history), `webserver` (the page you are looking at), `ui-sidebar` (the sidebar on the left), and `agent-loop` — **the agent loop itself is a plugin**.
+
+This repo walks you from "open a terminal" to building your own plugin and watching its lifecycle.
 
 ---
 
@@ -120,6 +137,20 @@ npx @deepseek-ai/dsh web --patch ./enable-skills-in-web.yml
 That file is in this repo's root.
 
 ---
+
+## What this tutorial found
+
+Writing this meant running DSH end to end on two clean Macs. These behaviors are documented in the tutorial because each one silently blocks a beginner:
+
+| Finding | Why it matters |
+|---|---|
+| The web profile ships with `tool-skill` and `skill-filesystem` **disabled**; `headless` has them on | Same skill works in the CLI, silently does nothing in the web UI, with no error |
+| The web UI **requires a workspace** before the send button activates | The CLI has no such requirement, so it's easy to miss when testing |
+| A stale DSH process holding port 3080 makes the page **load normally** | New instance exits with `EADDRINUSE`; the browser silently talks to the old one and no config change appears to take effect |
+| `--patch` **inserts** rather than overrides, so patched plugins mount twice | Harmless, but the plugin list shows 7 skill plugins instead of 5 |
+| A camelCase frontmatter key drops the **entire skill**, warning only | Documented fail-closed behavior, but hard to diagnose without knowing it |
+
+All verified on `0.1.0-rc.6`.
 
 ## Companion tool
 

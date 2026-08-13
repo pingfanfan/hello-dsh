@@ -1,0 +1,45 @@
+name: 教程卡住了
+description: 跟着教程走，某一步没看到预期结果
+title: "[卡住] 第 N 步："
+labels: ["教程问题"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢反馈。教程的每个检查点都是为了在这里挡住问题，你卡住说明它没挡住，这是教程的问题不是你的。
+  - type: input
+    id: step
+    attributes:
+      label: 卡在第几步
+      placeholder: "例如：第 7 步，做第一个插件"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 教程说应该看到什么
+      placeholder: 直接复制教程里那个检查点的原话
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 你实际看到了什么
+      description: 报错请贴完整文本（记得去掉 API 密钥和用户名），截图也可以
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      placeholder: "macOS 15 / Node v22.11.0 / DSH 0.1.0-rc.6"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checked
+    attributes:
+      label: 排查过了吗（没查也可以提，只是会多一轮往返）
+      options:
+        - label: "跑过 `lsof -nP -iTCP:3080 -sTCP:LISTEN`，确认端口没被旧进程占着"
+        - label: "网页版启动时带了 `--patch ~/enable-skills.yml`"
+        - label: "已经选了工作区（发送按钮是蓝的）"
