@@ -1,2 +1,5 @@
 .DS_Store
 node_modules/
+
+# 草稿不公开，只留在本地
+drafts/
