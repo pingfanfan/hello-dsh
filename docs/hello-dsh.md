@@ -409,22 +409,26 @@ EOF
 hello dsh
 ```
 
-或者用命令行：
+![技能生效](../assets/11-skill-works-web.png)
 
-```sh
-npx @deepseek-ai/dsh --profile headless "hello dsh"
-```
+**这句暗号不可能来自模型的训练数据**，因为是你三十秒前刚写的。
 
-真实输出：
+**上面那几行灰字比暗号本身更值得看**，它们是模型的完整思考过程：
 
-```
-**HELLO DSH — 这句话来自我电脑上的一个文件**
+| 你看到的 | 发生了什么 |
+|---|---|
+| `Context injection · skill-catalog` | DSH 把技能清单注入了对话 |
+| `Think · matches the hello-dsh skill` | 模型靠 `description` 认出这个场景该用它 |
+| `Skill · hello-dsh` | 加载这个技能的正文 |
+| `Read · /Users/.../hello-dsh/SKILL.md` | **真的去读了磁盘上那个文件** |
 
-这句话不在我的训练数据里，是刚才通过 skill 工具从本地磁盘上的
-~/.dsh/skills/hello-dsh/SKILL.md 这个 Markdown 文件读到的。
-```
+注意最后一步：它不是"想起"了什么，是**打开文件读的**。第 7 步会把这一点验证得更彻底。
 
-**这句暗号不可能来自模型的训练数据**，因为是你三十秒前刚写的。这就是它生效的证据。
+> **也可以用命令行**，结果一样：
+>
+> ```sh
+> npx @deepseek-ai/dsh --profile headless "hello dsh"
+> ```
 
 ### 这个文件的两个必填项
 
