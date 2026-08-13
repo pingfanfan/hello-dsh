@@ -29,13 +29,12 @@ It assumes you have nothing: no Node.js, no command-line experience. Every secti
 | Steps | What | Time |
 |---|---|---|
 | 1–2 | Open a terminal, install Node.js | 7 min |
-| 3–4 | Launch DSH, configure the API key (all in the browser) | 8 min |
-| 5 | **See all 133 plugins for yourself** | 3 min |
-| 6–7 | Build your first plugin (Markdown route), watch its lifecycle | 10 min |
-| 8 | Build a second plugin (TypeScript route, with three real errors) | 15 min |
-| 9 | Theory: what the Cordis paper says (optional) | 10 min |
+| 3–5 | Launch DSH, configure the API key, pick a workspace | 10 min |
+| 6 | **See all 133 plugins for yourself** | 3 min |
+| 7–8 | **Build your first plugin, watch its lifecycle** | 10 min |
+| 9–10 | What's next, theory (optional) | 13 min |
 
-Steps 1–7 take about 30 minutes and leave you with a working setup.
+Steps 1–8 take about 30 minutes and leave you with a working setup.
 
 ---
 
